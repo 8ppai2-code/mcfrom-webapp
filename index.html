@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>MC From</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0a0a; --card:#141414; --card2:#1c1c1c;
+  --accent:#00e676; --gold:#ffd740; --red:#ff5252;
+  --text:#f0f0f0; --muted:#777; --border:#252525;
+  --nav:70px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden;padding-bottom:calc(var(--nav) + 8px)}
+
+/* LOADING */
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;transition:opacity .6s}
+#loading.hide{opacity:0;pointer-events:none}
+#loading img{width:110px;height:110px;image-rendering:pixelated;animation:pulse 1s ease-in-out infinite alternate}
+.load-brand{font-family:'Press Start 2P',monospace;font-size:16px;color:var(--accent);margin-top:18px;text-shadow:0 0 20px var(--accent);letter-spacing:2px}
+.load-sub{font-family:'VT323',monospace;font-size:22px;color:var(--muted);margin-top:6px;animation:blink 1s step-end infinite}
+@keyframes pulse{from{filter:drop-shadow(0 0 8px var(--accent))}to{transform:scale(1.07);filter:drop-shadow(0 0 28px var(--accent))}}
+@keyframes blink{50%{opacity:0}}
+
+/* PAGES */
+.page{display:none;min-height:calc(100vh - var(--nav));animation:fadeUp .3s ease}
+.page.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+/* HEADER */
+.ph{display:flex;align-items:center;gap:10px;padding:16px 16px 10px;position:sticky;top:0;z-index:50;background:linear-gradient(to bottom,var(--bg) 75%,transparent)}
+.ph h1{font-family:'Press Start 2P',monospace;font-size:12px;color:var(--accent);text-shadow:0 0 12px var(--accent);letter-spacing:1px}
+.ph-icon{width:26px;height:26px;image-rendering:pixelated;filter:drop-shadow(0 0 5px var(--accent))}
+
+/* FEATURED */
+.feat-wrap{padding:0 14px 14px}
+.feat-card{position:relative;border-radius:12px;overflow:hidden;height:175px;border:1px solid var(--accent);box-shadow:0 0 18px rgba(0,230,118,.12);cursor:pointer}
+.feat-card img{width:100%;height:100%;object-fit:cover;opacity:.65}
+.feat-badge{position:absolute;top:10px;left:10px;background:var(--accent);color:#000;font-family:'Press Start 2P',monospace;font-size:6px;padding:4px 7px;border-radius:4px}
+.feat-bottom{position:absolute;bottom:0;left:0;right:0;padding:28px 12px 12px;background:linear-gradient(transparent,rgba(0,0,0,.92))}
+.feat-name{font-family:'VT323',monospace;font-size:26px;color:#fff}
+.feat-dl{position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,.7);border:1px solid var(--accent);color:var(--accent);font-family:'Press Start 2P',monospace;font-size:6px;padding:6px 9px;border-radius:6px}
+
+/* FILTER */
+.filters{display:flex;gap:7px;padding:0 14px 12px;overflow-x:auto;scrollbar-width:none}
+.filters::-webkit-scrollbar{display:none}
+.ftab{flex-shrink:0;background:var(--card);border:1px solid var(--border);color:var(--muted);font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;padding:5px 13px;border-radius:20px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.ftab.on{background:var(--accent);border-color:var(--accent);color:#000}
+
+/* MOD CARDS */
+.mlist{padding:0 14px;display:flex;flex-direction:column;gap:10px}
+.mc{background:var(--card);border-radius:10px;overflow:hidden;border:1px solid var(--border);cursor:pointer;transition:transform .15s,border-color .15s}
+.mc:active{transform:scale(.98);border-color:var(--accent)}
+.mc-img{width:100%;height:135px;object-fit:cover;display:block;background:#111}
+.mc-body{padding:9px 12px 11px;display:flex;justify-content:space-between;align-items:center}
+.mc-name{font-family:'VT323',monospace;font-size:20px}
+.mc-tag{background:var(--card2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:11px;color:var(--muted);font-weight:700}
+
+/* PASS PRICE */
+.mc-price{display:flex;align-items:center;gap:4px;font-family:'VT323',monospace;font-size:18px;color:var(--gold)}
+.mc-price img{width:15px;height:15px;image-rendering:pixelated}
+
+/* DETAIL */
+#page-detail{padding-bottom:100px}
+.det-img{width:100%;height:210px;object-fit:cover;display:block}
+.det-actions{display:flex;gap:8px;padding:12px 14px}
+.abtn{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:14px;color:var(--text);transition:all .2s;flex:1}
+.abtn img{width:17px;height:17px;image-rendering:pixelated}
+.abtn.back-btn{flex:0 0 auto;padding:10px 13px}
+.abtn.dl-btn{background:var(--accent);border-color:var(--accent);color:#000;flex:2}
+.abtn.liked{border-color:var(--accent);color:var(--accent)}
+.det-info{padding:0 14px 14px}
+.det-name{font-family:'Press Start 2P',monospace;font-size:11px;line-height:1.7;margin-bottom:10px}
+.det-desc{font-size:15px;color:var(--muted);line-height:1.6}
+
+/* SOON */
+.soon{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:14px}
+.soon img{width:95px;height:95px;image-rendering:pixelated;filter:drop-shadow(0 0 18px var(--accent));animation:pulse 1.5s ease-in-out infinite alternate}
+.soon-t{font-family:'Press Start 2P',monospace;font-size:13px;color:var(--accent);text-shadow:0 0 14px var(--accent);animation:blink 1.5s step-end infinite}
+.soon-s{font-family:'VT323',monospace;font-size:20px;color:var(--muted)}
+
+/* TOOLS */
+.tlist{padding:14px;display:flex;flex-direction:column;gap:10px}
+.tc{background:var(--card);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;gap:13px;padding:12px 13px;cursor:pointer;transition:border-color .2s}
+.tc:active{border-color:var(--accent)}
+.tc-icon{width:50px;height:50px;border-radius:8px;object-fit:cover;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:26px}
+.tc-info{flex:1}
+.tc-name{font-family:'VT323',monospace;font-size:20px;line-height:1}
+.tc-desc{font-size:13px;color:var(--muted);margin-top:2px}
+.tc-btn{background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:'Press Start 2P',monospace;font-size:7px;padding:6px 9px;border-radius:6px;cursor:pointer;white-space:nowrap}
+
+/* PAINT TOOL */
+.ptool{padding:14px}
+.pbox{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.pbox h2{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--accent);line-height:1.7}
+.uzone{border:2px dashed var(--border);border-radius:10px;padding:28px 14px;text-align:center;cursor:pointer;transition:border-color .2s}
+.uzone:active,.uzone.over{border-color:var(--accent)}
+.uzone.done{border-color:var(--accent);background:rgba(0,230,118,.03)}
+.uzone p{color:var(--muted);font-size:14px;margin-top:6px}
+.gbtn{background:var(--accent);color:#000;font-family:'Press Start 2P',monospace;font-size:8px;border:none;border-radius:8px;padding:13px;cursor:pointer;letter-spacing:.5px;transition:opacity .2s}
+.gbtn:disabled{opacity:.35;cursor:not-allowed}
+.sbox{background:var(--card2);border-radius:8px;padding:11px 13px;font-family:'VT323',monospace;font-size:18px;color:var(--accent);display:none}
+.sbox.show{display:block}
+
+/* NAV */
+#nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav);background:rgba(8,8,8,.96);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:0 6px;z-index:1000}
+.nb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex:1;cursor:pointer;padding:6px 2px;border-radius:10px;transition:all .2s}
+.nb.on .nlabel{color:var(--accent)}
+.nb.on .niw{filter:drop-shadow(0 0 6px var(--accent))}
+.niw{width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.niw img{width:23px;height:23px;image-rendering:pixelated}
+.nlabel{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;color:var(--muted);transition:color .2s}
+.nb.main{flex:0 0 62px}
+.nb.main .niw{width:54px;height:54px;background:var(--accent);border-radius:15px;margin-top:-18px;border:3px solid var(--bg);box-shadow:0 4px 18px rgba(0,230,118,.4)}
+.nb.main .niw img{width:28px;height:28px;filter:brightness(0)}
+.nb.main .nlabel{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<!-- LOADING -->
+<div id="loading">
+  <img src="data:image/gif;base64,R0lGODlhHQAhAPQUAFQ5FVk8FkUtKH4jI2o9IHBOIzRof7UpKYRfL5dbRKhjVuZBQb+HNsWFZ1WUsIuborW0sv+PgPy0j////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJMgAUACwAAAAAHQAhAAAFrSAljmRpnmiqrmzrvnAsz3Rt33iu7zzpTBPHb1ITDoVAmhGIJMqAAgFhSp3GoNIqVRaVSr5gAjcKLktgkLRCIGk0vm4JxBUAThQKcCIBdrICEFB5EgQREQRffit1gQYPgwuRg3RpBpYHmJmYkZyRKHUTl5qZnaUnoAajmqWdp2kDsLGyqpmnBbe4ubgMvL28tgDBwsMABQwIyMkMwCnFxyQIyyYBBQDNxgjQ0iUhACH5BAUyABQALAAADQAWABQAAAWfICVSzjQ55TSurIimqNnOrxmr82oKAuH/vpxo1wP+hCJeT8JsEpAUZXMqgQoUAkmjwdxWcyaIQtFMJJo4VsA0uTIJkQiBmV4FIKbx+8eEzNYQEAYPZBILh4V/gQaMB46PjoeShxRrE42Qj5OblgaZkJuTdxADpaann48BBaytrq0MsbKxqwC2t7gABQwIvb4MtUK6vCsIwAUAwrsIxQwhADs=" alt="MC From">
+  <div class="load-brand">MC FROM</div>
+  <div class="load-sub">Loading...</div>
+</div>
+
+<!-- ADD-ONS PAGE -->
+<div class="page active" id="page-addons">
+  <div class="ph">
+    <img class="ph-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACy0lEQVR4AZ2Wb0hTURjGn9UUYyBZ0lgapGS1wARRKcRwYCMYNAxbUNSHFVQSSfYhsoRBGH7JDxVmUPklI8WKIF2sP4oyDa0PJrRqkmBqrjYHxkhqdLvntHO8d957vfrAdu655z3P733PPfePESuQ0WgU2HE8HjdoxqoNBG29Ql5PuWwyMy7a70B4MoR9B3ej5eINQQukClAyJ8ZMmdlmvB38gs2FRZogDlDKOFl75h14HL7HAQ88m3DYA02QkZlvyd+KIJaGHMh00/bouVa8eh0Sj8wcWNPtxPPCQUyPfUV8dmqhAmKqx5yoZbSetnnvchD0uRFOVOQ1NYIk6R1tRAGOLF4iPeZSnb82Lv7X41T+Fdq3+ioQwEvYwmdkcaoXWTg7LRiub1SEbtuwi7afvr+hFTEIMZ+dimKkoI0krA4g5sJeCwSoQxhoqPQWLow9o31iTlQworBEUhFTqTnb/02+atTam2lMT6iLtiX+07CZHQiULSwPAy0CSLcqMWfG9uIqHkMgRMkga38FUtPN+D0XkiUrAzBzYvynegKO4VqYTOvRseMSj3GJ/faam0itTJGBiNZlZQDij1Qg26acJsnY9aEBXcVNgGkVkLGGx3RkXwVefENl+UnEYhFeEVsazQqIyESascRYsKbzccNAiI512EXQZIxW9KT3Nh0j5qqPCiYS7BAz40sjmhkCicHor/9t7C9cw3W0At9wJz2l+2Fnyd3OJ8lACZGlkxorXVhNAFFOWYn4nHmI3JRcDmKSGuuR+vsAn+H0HKLHTz3t/Lxe4yUBzQ2teHS5DcfvHqMVzU/NIRKOLoojW3NmOUuUlpVOzdZaVtN+njMbfffHFI2ld6xuwHj/EBwnqqhpY7iOniNANeOZwEf9ALbVuu500hvO607D9M95xYnMeEUvfTbJ391HQTvLS/FjIrIsY01AMuh9r1/3Z0qy/gFcGlr9x9PjZgAAAABJRU5ErkJggg==" alt="">
+    <h1>Add-ons</h1>
+  </div>
+  <div id="featured-wrap" style="display:none">
+    <div class="feat-wrap">
+      <div class="feat-card" onclick="openMod(featuredMod)">
+        <img id="feat-img" src="" alt="">
+        <div class="feat-badge">⭐ MOD OF THE WEEK</div>
+        <div class="feat-bottom"><div class="feat-name" id="feat-name"></div></div>
+        <div class="feat-dl">⬇ DOWNLOAD</div>
+      </div>
+    </div>
+  </div>
+  <div class="filters">
+    <button class="ftab on" onclick="filterMods('all',this)">All</button>
+    <button class="ftab" onclick="filterMods('Decorative',this)">Decorative</button>
+    <button class="ftab" onclick="filterMods('Tweaks',this)">Tweaks</button>
+    <button class="ftab" onclick="filterMods('Pets',this)">Pets</button>
+    <button class="ftab" onclick="filterMods('Combat',this)">Combat</button>
+  </div>
+  <div class="mlist" id="mods-list"></div>
+</div>
+
+<!-- WITHDRAW PAGE -->
+<div class="page" id="page-withdraw">
+  <div class="ph">
+    <img class="ph-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACbUlEQVR4Ae2VS0gUcRzHPzP7mk2n3XU1bRW0LKVQKyQNqZQoMSvtVNQtukXnLl3zVHQq6FLQyWOp4aNQSqVDVIihtWDCEuULHyius64z0+z4YFl3t01Y6NAP/sz/+f38v//XWElzWP8D0gXQjSSkC6C310HT29QgOwEIqYrvFJBWB3pb3foGbJaj2uLC/gagd5wByWUkt0inQ6OxByJAm4NIPq6jPwGiZ4hgiQBEnFmiWR64ARY7LE9pCQWSAfS+qwJrIZ2VeWh+t44LLWlIBsBzUEJXdZTZMJIHXp3TuPhmu4tEAL37Ajg9Rl9BRFtTtxqK6rPZXXqYsdZBrJKIxSHgKrKjKqFYwwkBprhDFpC8VgoaTrE694vBXL/hRDPFc2ojdmr5fL+fXV4BOV8gu9wJrUGIuYQJl8ieKeCt8OEqu4My0c6+JoFA5zc+tPRTZYjbXAVU37vOZF8H3spjOH1VdA084HxXcgemx9wKO7P+VeZHJ5ByW3DurUQNKRRfqSZreAT3kbtbA/KMk6VMjrLwpY3Vle0TjQaY4oM3RZan1/CW2snwyRvLYSzZngamem+RXXUCm7s+athzLFImP3tHEMXkAFM8/3Qe8oEyY0afyKlpJrzw2hSMJHd5kwnaDC08iTUj30zK3Hsu9ZnVyU9RRNxb04Nc2oYaHCe8OERouttsW/T34Ct5aOZVZZyVH09YGH5hlgsb98OzsaQOhJNPNT1w1o9ou8zS9yHk4qN4jr/c6pBZsv5d+nob+dAjU3zmY4DgjEpwNv5li3UgFF4LGHsR2CgGYh1HxeN4lSk9FSk9w6nGP/vLTDl+A/bbxthqfRrXAAAAAElFTkSuQmCC" alt="">
+    <h1>Withdraw</h1>
+  </div>
+  <div class="soon">
+    <img src="data:image/png;base64,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" alt="">
+    <div class="soon-t">SOON...</div>
+    <div class="soon-s">This feature is coming soon!</div>
+  </div>
+</div>
+
+<!-- EARN PAGE -->
+<div class="page" id="page-earn">
+  <div class="ph"><h1>Earn</h1></div>
+  <div class="soon">
+    <img src="data:image/png;base64,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" alt="">
+    <div class="soon-t">SOON...</div>
+    <div class="soon-s">Earn Minecoins — Coming Soon!</div>
+  </div>
+</div>
+
+<!-- TOOLS PAGE -->
+<div class="page" id="page-tools">
+  <div class="ph">
+    <img class="ph-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACGklEQVR4AWNhoDJgwSrIwvIfRP/584cRj97/UBpFDYqBMIP2XjwP5jvrG+Iy+P/Vq1cZLl++whAREf4f2VAWZIOyjgTAdUzc8pfBr/UMwyXOKIYHRbeQDYYbpqurwwBia2trww1lARmGbNCTgzUMExn+gtky9i0Mm2xuYXUZyDAQALGRDQW7cOtcS4aynEdgBdoe8xnmX8kHszfZbGB49OgRw7Zt28D8jIwMkEawATDDYAavWLES7H14GM4+f5rBSkOK4drLaQw8PAwMB4KlwIbJycnBnbd69WqG0NBQsKEgA5BdCWOjRArIpTzKZxnMXW0ZQs9mgw0Tz3YAy72cegCubkaqJsg1DMjeB1kC9zIIvD8azCBovRZIMzBcklVnWLNIGqthIPD4xSewoTDvwwxDcSHIMBj9/bEWmP39hhvDp71VYK+fPHkS7N1yT3GG1s1PGap9GeCGMqAnG2QXIoN3O8tAyQDDMJABQBoYq09RDAMbCEpbD+eX/4e4zgxs8MP5vhBJFoh9q+9JgunO7S9hYv9x5SKwLEzyQsopoMGnGLo33Wc4ff0pisKwziNwtqmmNEOpnyJWQzHyMsywr2+fMGztisBwgXfZCqA8RB02Q+EGgnIMumHYXAAU/4/PUBZchsHEsYUTSB6XoXAXIhsGSiYgAIpdXAAU6zBDMbwMMn1VuQ3cNcjZDR+A+QTDy+iClACsJTYlAABoAzdif8CISAAAAABJRU5ErkJggg==" alt="">
+    <h1>Tools</h1>
+  </div>
+  <div class="tlist">
+    <div class="tc" onclick="showPage('paint')">
+      <div class="tc-icon" style="background:linear-gradient(135deg,#1a2a1a,#0a1a0a)">🎨</div>
+      <div class="tc-info">
+        <div class="tc-name">Custom Painting</div>
+        <div class="tc-desc">Add custom images as in-game paintings</div>
+      </div>
+      <button class="tc-btn">USE</button>
+    </div>
+    <div class="tc">
+      <div class="tc-icon" style="background:linear-gradient(135deg,#1a1a2a,#0a0a1a)">🗺️</div>
+      <div class="tc-info">
+        <div class="tc-name">ZIP to MCWorld</div>
+        <div class="tc-desc">Convert ZIP files to MCWorld format</div>
+      </div>
+      <button class="tc-btn">SOON</button>
+    </div>
+  </div>
+</div>
+
+<!-- PASS PAGE -->
+<div class="page" id="page-pass">
+  <div class="ph">
+    <img class="ph-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAATCAYAAABlcqYFAAAA30lEQVR4AWP59+nKf8avNxjIBYySIYyE1LCALbhbT7Yl/19s/M8o4Y/XIhayTYeBO1UELaLcEiIsQrFEPeEHUWbeXMBBkkUEfXLzXDiDutFKoizHZRFBS4i2AI9FWC0BuZ7h+U0Gde8LpFmAwyLsPgFawPCa/LyDbhFWS8j2ARaLDk1U/E9UxIMBGcG358grBteK19h9ggHICD6YBSA2YUsotIAoS8gNImQxFEuw5mQKLcCwhBYWUM0SfBaALfn/n5GBYK1DgQVgSy7v6WJ49ewVWRb8+/uLwb36I0E3AgD+jII+1xd5JAAAAABJRU5ErkJggg==" alt="">
+    <h1>Pass</h1>
+  </div>
+  <div class="filters">
+    <button class="ftab on" onclick="filterPass('all',this)">All</button>
+    <button class="ftab" onclick="filterPass('new',this)">New</button>
+    <button class="ftab" onclick="filterPass('popular',this)">Popular</button>
+  </div>
+  <div class="mlist" id="pass-list"></div>
+</div>
+
+<!-- DETAIL PAGE -->
+<div class="page" id="page-detail">
+  <img class="det-img" id="det-img" src="" alt="">
+  <div class="det-actions">
+    <button class="abtn back-btn" onclick="goBack()"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAP0lEQVR4AWNhwAL+AwEjEIDYLNgkkfks+CRRFGCTRFEgKyvL8PjxY9wKnjx5wghU9B9dEYobsCnC8AVMEYwPAHeaJHDus60JAAAAAElFTkSuQmCC" alt="back"></button>
+    <button class="abtn" id="like-btn" onclick="toggleLike()">
+      <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAYUlEQVR4AWNhIAKwwBj/hYX/g2jGt28ZkdlwRSDBxC9fGObz8MAVg/ggNkghC7KxMIUgGsO6PUCMLgni70FW5Ao0cjfQaJAEsgJXZDchK3SBmgxTgKIIWSGyAgxFMIXoYgBXkTfYtFa4QwAAAABJRU5ErkJggg==" alt="like"> <span id="like-count">0</span>
+    </button>
+    <button class="abtn" onclick="shareMod()">🔗 Share</button>
+    <button class="abtn dl-btn" onclick="downloadMod()">⬇ Download</button>
+  </div>
+  <div class="det-info">
+    <div class="det-name" id="det-name"></div>
+    <div class="det-desc" id="det-desc"></div>
+  </div>
+</div>
+
+<!-- CUSTOM PAINTING TOOL -->
+<div class="page" id="page-paint">
+  <div class="ph">
+    <button onclick="showPage('tools')" style="background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;margin-right:4px">←</button>
+    <h1>Custom Painting</h1>
+  </div>
+  <div class="ptool">
+    <div class="pbox">
+      <h2>ADD IMAGE AS PAINTING TO YOUR ADDON</h2>
+      <div class="uzone" id="zone-img" onclick="document.getElementById('inp-img').click()">
+        <div style="font-size:34px">🖼️</div>
+        <p id="img-lbl">Tap to upload your image (PNG / JPG)</p>
+        <input type="file" id="inp-img" accept="image/*" style="display:none" onchange="handleImg(this)">
+      </div>
+      <div class="uzone" id="zone-pack" onclick="document.getElementById('inp-pack').click()">
+        <div style="font-size:34px">📦</div>
+        <p id="pack-lbl">Tap to upload .mcpack file</p>
+        <input type="file" id="inp-pack" accept=".mcpack,.zip" style="display:none" onchange="handlePack(this)">
+      </div>
+      <button class="gbtn" id="gen-btn" disabled onclick="generatePack()">⚡ GENERATE PACK</button>
+      <div class="sbox" id="sbox">Ready...</div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav id="nav">
+  <div class="nb on" data-p="addons" onclick="showPage('addons',this)">
+    <div class="niw"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACy0lEQVR4AZ2Wb0hTURjGn9UUYyBZ0lgapGS1wARRKcRwYCMYNAxbUNSHFVQSSfYhsoRBGH7JDxVmUPklI8WKIF2sP4oyDa0PJrRqkmBqrjYHxkhqdLvntHO8d957vfrAdu655z3P733PPfePESuQ0WgU2HE8HjdoxqoNBG29Ql5PuWwyMy7a70B4MoR9B3ej5eINQQukClAyJ8ZMmdlmvB38gs2FRZogDlDKOFl75h14HL7HAQ88m3DYA02QkZlvyd+KIJaGHMh00/bouVa8eh0Sj8wcWNPtxPPCQUyPfUV8dmqhAmKqx5yoZbSetnnvchD0uRFOVOQ1NYIk6R1tRAGOLF4iPeZSnb82Lv7X41T+Fdq3+ioQwEvYwmdkcaoXWTg7LRiub1SEbtuwi7afvr+hFTEIMZ+dimKkoI0krA4g5sJeCwSoQxhoqPQWLow9o31iTlQworBEUhFTqTnb/02+atTam2lMT6iLtiX+07CZHQiULSwPAy0CSLcqMWfG9uIqHkMgRMkga38FUtPN+D0XkiUrAzBzYvynegKO4VqYTOvRseMSj3GJ/faam0itTJGBiNZlZQDij1Qg26acJsnY9aEBXcVNgGkVkLGGx3RkXwVefENl+UnEYhFeEVsazQqIyESascRYsKbzccNAiI512EXQZIxW9KT3Nh0j5qqPCiYS7BAz40sjmhkCicHor/9t7C9cw3W0At9wJz2l+2Fnyd3OJ8lACZGlkxorXVhNAFFOWYn4nHmI3JRcDmKSGuuR+vsAn+H0HKLHTz3t/Lxe4yUBzQ2teHS5DcfvHqMVzU/NIRKOLoojW3NmOUuUlpVOzdZaVtN+njMbfffHFI2ld6xuwHj/EBwnqqhpY7iOniNANeOZwEf9ALbVuu500hvO607D9M95xYnMeEUvfTbJ391HQTvLS/FjIrIsY01AMuh9r1/3Z0qy/gFcGlr9x9PjZgAAAABJRU5ErkJggg==" alt=""></div>
+    <span class="nlabel">Add-on</span>
+  </div>
+  <div class="nb" data-p="withdraw" onclick="showPage('withdraw',this)">
+    <div class="niw"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACbUlEQVR4Ae2VS0gUcRzHPzP7mk2n3XU1bRW0LKVQKyQNqZQoMSvtVNQtukXnLl3zVHQq6FLQyWOp4aNQSqVDVIihtWDCEuULHyius64z0+z4YFl3t01Y6NAP/sz/+f38v//XWElzWP8D0gXQjSSkC6C310HT29QgOwEIqYrvFJBWB3pb3foGbJaj2uLC/gagd5wByWUkt0inQ6OxByJAm4NIPq6jPwGiZ4hgiQBEnFmiWR64ARY7LE9pCQWSAfS+qwJrIZ2VeWh+t44LLWlIBsBzUEJXdZTZMJIHXp3TuPhmu4tEAL37Ajg9Rl9BRFtTtxqK6rPZXXqYsdZBrJKIxSHgKrKjKqFYwwkBprhDFpC8VgoaTrE694vBXL/hRDPFc2ojdmr5fL+fXV4BOV8gu9wJrUGIuYQJl8ieKeCt8OEqu4My0c6+JoFA5zc+tPRTZYjbXAVU37vOZF8H3spjOH1VdA084HxXcgemx9wKO7P+VeZHJ5ByW3DurUQNKRRfqSZreAT3kbtbA/KMk6VMjrLwpY3Vle0TjQaY4oM3RZan1/CW2snwyRvLYSzZngamem+RXXUCm7s+athzLFImP3tHEMXkAFM8/3Qe8oEyY0afyKlpJrzw2hSMJHd5kwnaDC08iTUj30zK3Hsu9ZnVyU9RRNxb04Nc2oYaHCe8OERouttsW/T34Ct5aOZVZZyVH09YGH5hlgsb98OzsaQOhJNPNT1w1o9ou8zS9yHk4qN4jr/c6pBZsv5d+nob+dAjU3zmY4DgjEpwNv5li3UgFF4LGHsR2CgGYh1HxeN4lSk9FSk9w6nGP/vLTDl+A/bbxthqfRrXAAAAAElFTkSuQmCC" alt=""></div>
+    <span class="nlabel">Withdraw</span>
+  </div>
+  <div class="nb main" data-p="addons" onclick="showPage('addons',this)">
+    <div class="niw"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAACy0lEQVR4AZ2Wb0hTURjGn9UUYyBZ0lgapGS1wARRKcRwYCMYNAxbUNSHFVQSSfYhsoRBGH7JDxVmUPklI8WKIF2sP4oyDa0PJrRqkmBqrjYHxkhqdLvntHO8d957vfrAdu655z3P733PPfePESuQ0WgU2HE8HjdoxqoNBG29Ql5PuWwyMy7a70B4MoR9B3ej5eINQQukClAyJ8ZMmdlmvB38gs2FRZogDlDKOFl75h14HL7HAQ88m3DYA02QkZlvyd+KIJaGHMh00/bouVa8eh0Sj8wcWNPtxPPCQUyPfUV8dmqhAmKqx5yoZbSetnnvchD0uRFOVOQ1NYIk6R1tRAGOLF4iPeZSnb82Lv7X41T+Fdq3+ioQwEvYwmdkcaoXWTg7LRiub1SEbtuwi7afvr+hFTEIMZ+dimKkoI0krA4g5sJeCwSoQxhoqPQWLow9o31iTlQworBEUhFTqTnb/02+atTam2lMT6iLtiX+07CZHQiULSwPAy0CSLcqMWfG9uIqHkMgRMkga38FUtPN+D0XkiUrAzBzYvynegKO4VqYTOvRseMSj3GJ/faam0itTJGBiNZlZQDij1Qg26acJsnY9aEBXcVNgGkVkLGGx3RkXwVefENl+UnEYhFeEVsazQqIyESascRYsKbzccNAiI512EXQZIxW9KT3Nh0j5qqPCiYS7BAz40sjmhkCicHor/9t7C9cw3W0At9wJz2l+2Fnyd3OJ8lACZGlkxorXVhNAFFOWYn4nHmI3JRcDmKSGuuR+vsAn+H0HKLHTz3t/Lxe4yUBzQ2teHS5DcfvHqMVzU/NIRKOLoojW3NmOUuUlpVOzdZaVtN+njMbfffHFI2ld6xuwHj/EBwnqqhpY7iOniNANeOZwEf9ALbVuu500hvO607D9M95xYnMeEUvfTbJ391HQTvLS/FjIrIsY01AMuh9r1/3Z0qy/gFcGlr9x9PjZgAAAABJRU5ErkJggg==" alt=""></div>
+    <span class="nlabel">Add-on</span>
+  </div>
+  <div class="nb" data-p="tools" onclick="showPage('tools',this)">
+    <div class="niw"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAACGklEQVR4AWNhoDJgwSrIwvIfRP/584cRj97/UBpFDYqBMIP2XjwP5jvrG+Iy+P/Vq1cZLl++whAREf4f2VAWZIOyjgTAdUzc8pfBr/UMwyXOKIYHRbeQDYYbpqurwwBia2trww1lARmGbNCTgzUMExn+gtky9i0Mm2xuYXUZyDAQALGRDQW7cOtcS4aynEdgBdoe8xnmX8kHszfZbGB49OgRw7Zt28D8jIwMkEawATDDYAavWLES7H14GM4+f5rBSkOK4drLaQw8PAwMB4KlwIbJycnBnbd69WqG0NBQsKEgA5BdCWOjRArIpTzKZxnMXW0ZQs9mgw0Tz3YAy72cegCubkaqJsg1DMjeB1kC9zIIvD8azCBovRZIMzBcklVnWLNIGqthIPD4xSewoTDvwwxDcSHIMBj9/bEWmP39hhvDp71VYK+fPHkS7N1yT3GG1s1PGap9GeCGMqAnG2QXIoN3O8tAyQDDMJABQBoYq09RDAMbCEpbD+eX/4e4zgxs8MP5vhBJFoh9q+9JgunO7S9hYv9x5SKwLEzyQsopoMGnGLo33Wc4ff0pisKwziNwtqmmNEOpnyJWQzHyMsywr2+fMGztisBwgXfZCqA8RB02Q+EGgnIMumHYXAAU/4/PUBZchsHEsYUTSB6XoXAXIhsGSiYgAIpdXAAU6zBDMbwMMn1VuQ3cNcjZDR+A+QTDy+iClACsJTYlAABoAzdif8CISAAAAABJRU5ErkJggg==" alt=""></div>
+    <span class="nlabel">Tools</span>
+  </div>
+  <div class="nb" data-p="pass" onclick="showPage('pass',this)">
+    <div class="niw"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAATCAYAAABlcqYFAAAA30lEQVR4AWP59+nKf8avNxjIBYySIYyE1LCALbhbT7Yl/19s/M8o4Y/XIhayTYeBO1UELaLcEiIsQrFEPeEHUWbeXMBBkkUEfXLzXDiDutFKoizHZRFBS4i2AI9FWC0BuZ7h+U0Gde8LpFmAwyLsPgFawPCa/LyDbhFWS8j2ARaLDk1U/E9UxIMBGcG358grBteK19h9ggHICD6YBSA2YUsotIAoS8gNImQxFEuw5mQKLcCwhBYWUM0SfBaALfn/n5GBYK1DgQVgSy7v6WJ49ewVWRb8+/uLwb36I0E3AgD+jII+1xd5JAAAAABJRU5ErkJggg==" alt=""></div>
+    <span class="nlabel">Pass</span>
+  </div>
+</nav>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>
+// ── STATE ──────────────────────────────────────────
+const MODS = [];
+const PASS_MODS = [];
+let currentMod = null;
+let featuredMod = null;
+let prevPage = 'addons';
+let imgFile = null, packFile = null;
+const IMG_PD = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAgklEQVR4AWNhgAIHLYb/DGjgwDUGRhDNAlOw/8pNdDUMjjrq/0EKWeAK7tkiZNl8wdT+HckMjh5z/4NNAil4cO0/g4IWI0TRr80QvoEfA9w6GIApBNEwxRiKYApQFCIrglmFTG+awwRRBHK9o9+r/4V+Ehi+69/0AhwMLIjweIEznAAVBDnPN0PiqQAAAABJRU5ErkJggg==";
+const IMG_PJ = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAABf0lEQVR4AWNhoDFgoUTzZS2t/yBa99o1Rmx8iiwAGaYTFcXw8cULhssMDGCDT3/4AJbrFBH5X/7mDSNFFoAAyPDH+/bBDcYGKLIAm+Gvf/3CbgEx4YkMQOIwNeiGw4IHbgGx4YnNEpA8shi6WrgPiAlPbABkIMwSbA6BW0BMeOKzBJcc2AJiwxMXQI4vEBvk0KRnz1CTKY7wBFEoYriArJMTOP5AhiP7HCWZYgnP/3u7i3Aa+uPDVwbv1plg9rp167CqwcgH2IIEZBCHADeYhgEQHwaQgwbkeoxkSg0AC2KcyZQQQHY9LoA3mdIKELQA5PK6lauwyjWFh1FuASgyz9x+x8A4XYihZY82WKzG5SrD/8x3DPt6iim34PLliwzfapIZ5ryyYeBW5AKLzbsowLAFKHb38UPKLYCB23dfMBgYKoHZN2+/ZBAVESNKH9EWqCiKYGVTbMGUHecZ7rzaC2YvLw4H06lzt1PNAsY7r97B2P8je1eiyFHDApINRAcApArlj4I6ZNEAAAAASUVORK5CYII=";
+
+// ── NAVIGATION ─────────────────────────────────────
+const noNavPages = ['detail','paint'];
+
+function showPage(id, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+
+  // nav highlight
+  if (!noNavPages.includes(id)) {
+    document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+    if (navEl) {
+      navEl.classList.add('on');
+      // also highlight main btn if going to addons
+      if (id === 'addons') {
+        document.querySelectorAll('.nb.main').forEach(b => b.classList.add('on'));
+      }
+    } else {
+      document.querySelectorAll('.nb').forEach(b => {
+        if (b.dataset.p === id) b.classList.add('on');
+      });
+    }
+  }
+}
+
+function goBack() {
+  showPage(prevPage);
+}
+
+// ── LOADING ─────────────────────────────────────────
+window.addEventListener('load', () => {
+  renderMods();
+  renderPass();
+  setTimeout(() => {
+    document.getElementById('loading').classList.add('hide');
+    setTimeout(() => document.getElementById('loading').remove(), 700);
+  }, 2200);
+});
+
+// ── MOD CARDS ──────────────────────────────────────
+function renderMods(filter = 'all') {
+  const list = document.getElementById('mods-list');
+  const filtered = filter === 'all' ? MODS : MODS.filter(m => m.tag === filter);
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:50px 20px;color:var(--muted);font-family:VT323,monospace;font-size:22px">No add-ons yet.<br>Check back soon!</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map((m, i) => `
+    <div class="mc" onclick="openMod(${MODS.indexOf(m)})">
+      <img class="mc-img" src="${m.img || ''}" alt="${m.name}"
+           onerror="this.style.background='#1a1a1a';this.style.height='80px'">
+      <div class="mc-body">
+        <span class="mc-name">${m.name}</span>
+        <span class="mc-tag">${m.tag || 'Addon'}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderPass(filter = 'all') {
+  const list = document.getElementById('pass-list');
+  const filtered = filter === 'all' ? PASS_MODS : PASS_MODS.filter(m => m.filter === filter);
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:50px 20px;color:var(--muted);font-family:VT323,monospace;font-size:22px">No Pass mods yet.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map((m, i) => `
+    <div class="mc" onclick="openPassMod(${PASS_MODS.indexOf(m)})">
+      <img class="mc-img" src="${m.img || ''}" alt="${m.name}"
+           onerror="this.style.background='#1a1a1a';this.style.height='80px'">
+      <div class="mc-body">
+        <span class="mc-name">${m.name}</span>
+        ${m.price ? `<span class="mc-price"><img src="${IMG_PD}" alt="⭐"> ${m.price}</span>` : `<img src="${IMG_PJ}" style="width:20px;height:20px;image-rendering:pixelated" alt="free">`}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterMods(tag, el) {
+  document.querySelectorAll('.filters .ftab').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  renderMods(tag);
+}
+
+function filterPass(tag, el) {
+  document.querySelectorAll('#page-pass .ftab').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  renderPass(tag);
+}
+
+// ── MOD DETAIL ─────────────────────────────────────
+function openMod(idx) {
+  const mod = typeof idx === 'object' ? idx : MODS[idx];
+  if (!mod) return;
+  currentMod = mod;
+  prevPage = document.querySelector('.page.active').id.replace('page-','');
+  document.getElementById('det-img').src = mod.img || '';
+  document.getElementById('det-name').textContent = mod.name;
+  document.getElementById('det-desc').textContent = mod.desc || 'No description available.';
+  document.getElementById('like-count').textContent = mod.likes || 0;
+  document.getElementById('like-btn').classList.toggle('liked', mod.liked || false);
+  showPage('detail');
+}
+
+function openPassMod(idx) {
+  const mod = PASS_MODS[idx];
+  if (!mod) return;
+  currentMod = mod;
+  prevPage = 'pass';
+  document.getElementById('det-img').src = mod.img || '';
+  document.getElementById('det-name').textContent = mod.name;
+  document.getElementById('det-desc').textContent = mod.desc || 'No description available.';
+  document.getElementById('like-count').textContent = mod.likes || 0;
+  document.getElementById('like-btn').classList.toggle('liked', mod.liked || false);
+  showPage('detail');
+}
+
+function toggleLike() {
+  if (!currentMod) return;
+  currentMod.liked = !currentMod.liked;
+  currentMod.likes = (currentMod.likes || 0) + (currentMod.liked ? 1 : -1);
+  document.getElementById('like-count').textContent = currentMod.likes;
+  document.getElementById('like-btn').classList.toggle('liked', currentMod.liked);
+}
+
+function shareMod() {
+  if (!currentMod) return;
+  if (navigator.share) {
+    navigator.share({ title: currentMod.name, text: currentMod.desc || '', url: window.location.href });
+  } else {
+    navigator.clipboard?.writeText(window.location.href);
+    alert('Link copied!');
+  }
+}
+
+function downloadMod() {
+  if (!currentMod) return;
+  if (currentMod.file) {
+    window.Telegram?.WebApp?.sendData(JSON.stringify({ action:'download', id: currentMod.id }));
+  } else {
+    alert('File not available yet.');
+  }
+}
+
+// ── CUSTOM PAINTING TOOL ────────────────────────────
+function handleImg(input) {
+  imgFile = input.files[0];
+  if (imgFile) {
+    document.getElementById('img-lbl').textContent = '✅ ' + imgFile.name;
+    document.getElementById('zone-img').classList.add('done');
+    checkGen();
+  }
+}
+function handlePack(input) {
+  packFile = input.files[0];
+  if (packFile) {
+    document.getElementById('pack-lbl').textContent = '✅ ' + packFile.name;
+    document.getElementById('zone-pack').classList.add('done');
+    checkGen();
+  }
+}
+function checkGen() {
+  document.getElementById('gen-btn').disabled = !(imgFile && packFile);
+}
+
+function setStatus(msg) {
+  const b = document.getElementById('sbox');
+  b.textContent = msg; b.classList.add('show');
+}
+
+async function generatePack() {
+  if (!imgFile || !packFile) return;
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  setStatus('⏳ Reading pack...');
+
+  try {
+    const zip = await JSZip.loadAsync(packFile);
+    setStatus('⏳ Processing image...');
+
+    // Resize image to 128x128 using canvas
+    const imgData = await new Promise((res, rej) => {
+      const reader = new FileReader();
+      reader.onload = e => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          canvas.width = 128; canvas.height = 128;
+          canvas.getContext('2d').drawImage(img, 0, 0, 128, 128);
+          canvas.toBlob(blob => {
+            const r2 = new FileReader();
+            r2.onload = e2 => res(e2.target.result.split(',')[1]);
+            r2.readAsDataURL(blob);
+          }, 'image/png');
+        };
+        img.onerror = rej;
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(imgFile);
+    });
+
+    // Find next available index in textures/blocks/custom_paintings/
+    const path = 'textures/blocks/custom_paintings/';
+    let idx = 0;
+    while (zip.file(path + idx + '.png')) idx++;
+    setStatus(`⏳ Adding as ${idx}.png...`);
+
+    zip.file(path + idx + '.png', imgData, { base64: true });
+
+    setStatus('⏳ Generating new pack...');
+    const blob = await zip.generateAsync({ type:'blob', compression:'DEFLATE', compressionOptions:{ level:6 } });
+
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = packFile.name.replace(/\.(mcpack|zip)$/i, '') + '_custom.mcpack';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    setStatus('✅ Done! Pack downloaded as ' + a.download);
+  } catch(e) {
+    setStatus('❌ Error: ' + e.message);
+  }
+
+  btn.disabled = false;
+}
+
+// ── TELEGRAM WEBAPP INIT ────────────────────────────
+if (window.Telegram?.WebApp) {
+  const tg = window.Telegram.WebApp;
+  tg.ready();
+  tg.expand();
+  tg.setHeaderColor('#0a0a0a');
+  tg.setBackgroundColor('#0a0a0a');
+}
+</script>
+</body>
+</html>
