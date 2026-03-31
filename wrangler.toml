@@ -1,4 +1,4 @@
-name = "telegram-bot"
+name = "bot"
 type = "javascript"
 main = "worker.js"
 account_id = "2518a283a31f599487bea84c077e7b97"
