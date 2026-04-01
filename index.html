@@ -90,7 +90,7 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;mi
 .tc-name{font-family:'VT323',monospace;font-size:20px;line-height:1}
 .tc-desc{font-size:13px;color:var(--muted);margin-top:2px}
 .tc-btn{background:transparent;border:1px solid var(--accent);color:var(--accent);font-family:'Press Start 2P',monospace;font-size:7px;padding:6px 9px;border-radius:6px;cursor:pointer;white-space:nowrap}
-
+  
 /* PAINT TOOL */
 .ptool{padding:14px}
 .pbox{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px}
@@ -125,8 +125,8 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;mi
   <img src="data:image/gif;base64,R0lGODlhHQAhAPQUAFQ5FVk8FkUtKH4jI2o9IHBOIzRof7UpKYRfL5dbRKhjVuZBQb+HNsWFZ1WUsIuborW0sv+PgPy0j////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQJMgAUACwAAAAAHQAhAAAFrSAljmRpnmiqrmzrvnAsz3Rt33iu7zzpTBPHb1ITDoVAmhGIJMqAAgFhSp3GoNIqVRaVSr5gAjcKLktgkLRCIGk0vm4JxBUAThQKcCIBdrICEFB5EgQREQRffit1gQYPgwuRg3RpBpYHmJmYkZyRKHUTl5qZnaUnoAajmqWdp2kDsLGyqpmnBbe4ubgMvL28tgDBwsMABQwIyMkMwCnFxyQIyyYBBQDNxgjQ0iUhACH5BAUyABQALAAADQAWABQAAAWfICVSzjQ55TSurIimqNnOrxmr82oKAuH/vpxo1wP+hCJeT8JsEpAUZXMqgQoUAkmjwdxWcyaIQtFMJJo4VsA0uTIJkQiBmV4FIKbx+8eEzNYQEAYPZBILh4V/gQaMB46PjoeShxRrE42Qj5OblgaZkJuTdxADpaann48BBaytrq0MsbKxqwC2t7gABQwIvb4MtUK6vCsIwAUAwrsIxQwhADs=" alt="MC From">
   <div class="load-brand">MC FROM</div>
   <div class="load-sub">Loading...</div>
-    </div>
-    
+</div>
+
 <!-- ADD-ONS PAGE -->
 <div class="page active" id="page-addons">
   <div class="ph">
@@ -201,8 +201,7 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;mi
     </div>
   </div>
 </div>
-
-<!-- PASS PAGE -->
+ <!-- PASS PAGE -->
 <div class="page" id="page-pass">
   <div class="ph">
     <img class="ph-icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAATCAYAAABlcqYFAAAA30lEQVR4AWP59+nKf8avNxjIBYySIYyE1LCALbhbT7Yl/19s/M8o4Y/XIhayTYeBO1UELaLcEiIsQrFEPeEHUWbeXMBBkkUEfXLzXDiDutFKoizHZRFBS4i2AI9FWC0BuZ7h+U0Gde8LpFmAwyLsPgFawPCa/LyDbhFWS8j2ARaLDk1U/E9UxIMBGcG358grBteK19h9ggHICD6YBSA2YUsotIAoS8gNImQxFEuw5mQKLcCwhBYWUM0SfBaALfn/n5GBYK1DgQVgSy7v6WJ49ewVWRb8+/uLwb36I0E3AgD+jII+1xd5JAAAAABJRU5ErkJggg==" alt="">
@@ -231,8 +230,8 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;mi
     <div class="det-name" id="det-name"></div>
     <div class="det-desc" id="det-desc"></div>
   </div>
-    </div>
-  
+</div>
+
 <!-- CUSTOM PAINTING TOOL -->
 <div class="page" id="page-paint">
   <div class="ph">
@@ -280,7 +279,7 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;mi
     <div class="niw"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAATCAYAAABlcqYFAAAA30lEQVR4AWP59+nKf8avNxjIBYySIYyE1LCALbhbT7Yl/19s/M8o4Y/XIhayTYeBO1UELaLcEiIsQrFEPeEHUWbeXMBBkkUEfXLzXDiDutFKoizHZRFBS4i2AI9FWC0BuZ7h+U0Gde8LpFmAwyLsPgFawPCa/LyDbhFWS8j2ARaLDk1U/E9UxIMBGcG358grBteK19h9ggHICD6YBSA2YUsotIAoS8gNImQxFEuw5mQKLcCwhBYWUM0SfBaALfn/n5GBYK1DgQVgSy7v6WJ49ewVWRb8+/uLwb36I0E3AgD+jII+1xd5JAAAAABJRU5ErkJggg==" alt=""></div>
     <span class="nlabel">Pass</span>
   </div>
-</nav>
+  </nav>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
@@ -324,35 +323,143 @@ function goBack() {
 }
 
 // ── LOADING + FETCH MODS ────────────────────────────
-window.addEventListener('load', async () => {
-  try {
-    const res = await fetch(GITHUB_MODS_URL + '?t=' + Date.now());
-    if (res.ok) {
-      const data = await res.json();
+window.addEventListener('load', () => {
+  // Hide loading after 1.5s no matter what
+  setTimeout(() => {
+    const el = document.getElementById('loading');
+    if (el) {
+      el.classList.add('hide');
+      setTimeout(() => { if(el.parentNode) el.parentNode.removeChild(el); }, 600);
+    }
+  }, 1500);
+
+  // Fetch mods in background
+  fetch(GITHUB_MODS_URL + '?t=' + Date.now())
+    .then(res => res.ok ? res.json() : null)
+    .then(data => {
+      if (!data) return;
       MODS      = data.addons || [];
       PASS_MODS = data.pass   || [];
       featuredMod = MODS.find(m => m.id === data.featured) || null;
-
-      // Show featured card
       if (featuredMod) {
-        document.getElementById('feat-img').src  = featuredMod.img || '';
+        document.getElementById('feat-img').src = featuredMod.img || '';
         document.getElementById('feat-name').textContent = featuredMod.name;
         document.getElementById('featured-wrap').style.display = 'block';
       }
-    }
-  } catch(e) {
-    console.log('Could not load mods:', e);
+      renderMods();
+      renderPass();
+    })
+    .catch(() => {});
+});
+
+// ── MOD CARDS ──────────────────────────────────────
+function renderMods(filter = 'all') {
+  const list = document.getElementById('mods-list');
+  const filtered = filter === 'all' ? MODS : MODS.filter(m => m.tag === filter);
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:50px 20px;color:var(--muted);font-family:VT323,monospace;font-size:22px">No add-ons yet.<br>Check back soon!</div>';
+    return;
   }
 
-  renderMods();
-  renderPass();
+  list.innerHTML = filtered.map((m, i) => `
+    <div class="mc" onclick="openMod(${MODS.indexOf(m)})">
+      <img class="mc-img" src="${m.img || ''}" alt="${m.name}"
+           onerror="this.style.background='#1a1a1a';this.style.height='80px'">
+      <div class="mc-body">
+        <span class="mc-name">${m.name}</span>
+        <span class="mc-tag">${m.tag || 'Addon'}</span>
+      </div>
+    </div>
+  `).join('');
+}
 
-  setTimeout(() => {
-    document.getElementById('loading').classList.add('hide');
-    setTimeout(() => document.getElementById('loading').remove(), 700);
-  }, 2200);
-});
+function renderPass(filter = 'all') {
+  const list = document.getElementById('pass-list');
+  const filtered = filter === 'all' ? PASS_MODS : PASS_MODS.filter(m => m.filter === filter);
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div style="text-align:center;padding:50px 20px;color:var(--muted);font-family:VT323,monospace;font-size:22px">No Pass mods yet.</div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map((m, i) => `
+    <div class="mc" onclick="openPassMod(${PASS_MODS.indexOf(m)})">
+      <img class="mc-img" src="${m.img || ''}" alt="${m.name}"
+           onerror="this.style.background='#1a1a1a';this.style.height='80px'">
+      <div class="mc-body">
+        <span class="mc-name">${m.name}</span>
+        ${m.price ? `<span class="mc-price"><img src="${IMG_PD}" alt="⭐"> ${m.price}</span>` : `<img src="${IMG_PJ}" style="width:20px;height:20px;image-rendering:pixelated" alt="free">`}
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterMods(tag, el) {
+  document.querySelectorAll('.filters .ftab').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  renderMods(tag);
+}
+
+function filterPass(tag, el) {
+  document.querySelectorAll('#page-pass .ftab').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  renderPass(tag);
+}
   
+// ── MOD DETAIL ─────────────────────────────────────
+function openMod(idx) {
+  const mod = typeof idx === 'object' ? idx : MODS[idx];
+  if (!mod) return;
+  currentMod = mod;
+  prevPage = document.querySelector('.page.active').id.replace('page-','');
+  document.getElementById('det-img').src = mod.img || '';
+  document.getElementById('det-name').textContent = mod.name;
+  document.getElementById('det-desc').textContent = mod.desc || 'No description available.';
+  document.getElementById('like-count').textContent = mod.likes || 0;
+  document.getElementById('like-btn').classList.toggle('liked', mod.liked || false);
+  showPage('detail');
+}
+
+function openPassMod(idx) {
+  const mod = PASS_MODS[idx];
+  if (!mod) return;
+  currentMod = mod;
+  prevPage = 'pass';
+  document.getElementById('det-img').src = mod.img || '';
+  document.getElementById('det-name').textContent = mod.name;
+  document.getElementById('det-desc').textContent = mod.desc || 'No description available.';
+  document.getElementById('like-count').textContent = mod.likes || 0;
+  document.getElementById('like-btn').classList.toggle('liked', mod.liked || false);
+  showPage('detail');
+}
+
+function toggleLike() {
+  if (!currentMod) return;
+  currentMod.liked = !currentMod.liked;
+  currentMod.likes = (currentMod.likes || 0) + (currentMod.liked ? 1 : -1);
+  document.getElementById('like-count').textContent = currentMod.likes;
+  document.getElementById('like-btn').classList.toggle('liked', currentMod.liked);
+}
+
+function shareMod() {
+  if (!currentMod) return;
+  if (navigator.share) {
+    navigator.share({ title: currentMod.name, text: currentMod.desc || '', url: window.location.href });
+  } else {
+    navigator.clipboard?.writeText(window.location.href);
+    alert('Link copied!');
+  }
+}
+
+function downloadMod() {
+  if (!currentMod) return;
+  if (currentMod.link) {
+    window.open(currentMod.link, '_blank');
+  } else {
+    alert('Download link not available.');
+  }
+}
 
 // ── CUSTOM PAINTING TOOL ────────────────────────────
 function handleImg(input) {
@@ -410,7 +517,7 @@ async function generatePack() {
       };
       reader.readAsDataURL(imgFile);
     });
-
+  
     // Find next available index in textures/blocks/custom_paintings/
     const path = 'textures/blocks/custom_paintings/';
     let idx = 0;
