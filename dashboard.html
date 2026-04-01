@@ -6,16 +6,10 @@
 <title>MC From — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#080808;--s1:#0f0f0f;--s2:#161616;--s3:#1e1e1e;
-  --ac:#00e676;--ac2:#69f0ae;--gold:#ffd740;--red:#ff4444;
-  --text:#eee;--muted:#666;--border:#222;
-}
+:root{--bg:#080808;--s1:#0f0f0f;--s2:#161616;--s3:#1e1e1e;--ac:#00e676;--gold:#ffd740;--red:#ff4444;--text:#eee;--muted:#666;--border:#222}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden}
 body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);pointer-events:none;z-index:9999}
-
-/* LOGIN */
 #login{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:20px}
 #login.hide{display:none}
 .login-logo{font-family:'Press Start 2P',monospace;font-size:18px;color:var(--ac);text-shadow:0 0 30px var(--ac);letter-spacing:2px;animation:glow 2s ease-in-out infinite alternate}
@@ -35,12 +29,8 @@ select.inp{cursor:pointer}
 .err{color:var(--red);font-family:'VT323',monospace;font-size:18px;text-align:center;display:none}
 .err.show{display:block}
 @keyframes glow{from{text-shadow:0 0 10px var(--ac)}to{text-shadow:0 0 40px var(--ac)}}
-
-/* APP */
 #app{display:none}
 #app.show{display:block}
-
-/* TOPBAR */
 .topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .topbar-brand{font-family:'Press Start 2P',monospace;font-size:9px;color:var(--ac);letter-spacing:1px}
 .topbar-right{display:flex;align-items:center;gap:10px}
@@ -48,19 +38,13 @@ select.inp{cursor:pointer}
 .stat-chip span{color:var(--ac)}
 .logout-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;cursor:pointer;transition:all .2s}
 .logout-btn:hover{border-color:var(--red);color:var(--red)}
-
-/* TABS */
 .tabs{display:flex;border-bottom:1px solid var(--border);background:var(--s1);padding:0 20px;overflow-x:auto;scrollbar-width:none}
 .tabs::-webkit-scrollbar{display:none}
 .tab{flex-shrink:0;padding:14px 16px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
 .tab.on{color:var(--ac);border-bottom-color:var(--ac)}
-
-/* CONTENT */
 .content{padding:20px;max-width:900px;margin:0 auto}
 .section{display:none}
 .section.on{display:block}
-
-/* MODS GRID */
 .mods-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-top:4px}
 .mod-card{background:var(--s2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .2s}
 .mod-card:hover{border-color:var(--ac)}
@@ -77,13 +61,9 @@ select.inp{cursor:pointer}
 .ic-btn:hover{border-color:var(--ac);color:var(--ac)}
 .ic-btn.del:hover{border-color:var(--red);color:var(--red)}
 .ic-btn.pin.on{border-color:var(--gold);color:var(--gold)}
-
-/* EMPTY */
 .empty{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted)}
 .empty-icon{font-size:48px;margin-bottom:12px}
 .empty p{font-family:'VT323',monospace;font-size:22px}
-
-/* FORM */
 .form-box{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:16px;max-width:580px}
 .form-box h2{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--ac);line-height:1.8}
 .field{display:flex;flex-direction:column;gap:6px}
@@ -91,29 +71,25 @@ select.inp{cursor:pointer}
 .form-row{display:flex;gap:10px}
 .form-row .field{flex:1}
 .upload-zone{border:2px dashed var(--border);border-radius:10px;padding:22px 14px;text-align:center;cursor:pointer;transition:border-color .2s}
-.upload-zone:hover,.upload-zone.over{border-color:var(--ac)}
+.upload-zone:hover{border-color:var(--ac)}
 .upload-zone.done{border-color:var(--ac);background:rgba(0,230,118,.03)}
 .upload-zone p{color:var(--muted);font-size:14px;margin-top:6px}
 .upload-icon{font-size:30px}
-.img-preview{width:100%;max-height:180px;object-fit:cover;border-radius:8px;display:none;margin-top:8px}
+.img-preview{width:100%;max-height:200px;object-fit:cover;border-radius:8px;display:none;margin-top:8px}
 .img-preview.show{display:block}
+.link-hint{font-size:12px;color:var(--muted);margin-top:4px}
+.link-hint span{color:var(--ac)}
 .status-bar{font-family:'VT323',monospace;font-size:18px;color:var(--ac);display:none;padding:8px 12px;background:var(--s3);border-radius:6px}
 .status-bar.show{display:block}
 .status-bar.err{color:var(--red)}
-
-/* SETTINGS */
 .settings-box{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:500px;display:flex;flex-direction:column;gap:16px}
 .settings-box h2{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--ac);line-height:1.8}
-
-/* MODAL */
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:none;align-items:center;justify-content:center;padding:16px}
 .overlay.show{display:flex}
 .modal{background:var(--s2);border:1px solid var(--border);border-radius:14px;padding:24px;width:min(480px,100%);display:flex;flex-direction:column;gap:16px;max-height:90vh;overflow-y:auto}
 .modal h3{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--ac);line-height:1.8}
 .modal-actions{display:flex;gap:8px}
 .modal-actions .btn{flex:1}
-
-/* TOAST */
 #toast{position:fixed;bottom:20px;right:20px;z-index:9000;display:flex;flex-direction:column;gap:8px;pointer-events:none}
 .toast-item{background:var(--s2);border:1px solid var(--ac);border-radius:8px;padding:10px 16px;font-family:'VT323',monospace;font-size:18px;color:var(--ac);animation:slideIn .3s ease;white-space:nowrap}
 .toast-item.err{border-color:var(--red);color:var(--red)}
@@ -121,8 +97,7 @@ select.inp{cursor:pointer}
 </style>
 </head>
 <body>
-
-<!-- LOGIN -->
+  
 <div id="login">
   <div class="login-logo">MC FROM</div>
   <div class="login-sub">Admin Dashboard</div>
@@ -134,7 +109,6 @@ select.inp{cursor:pointer}
   </div>
 </div>
 
-<!-- APP -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-brand">⚡ MC FROM ADMIN</div>
@@ -146,25 +120,22 @@ select.inp{cursor:pointer}
   </div>
 
   <div class="tabs">
-    <div class="tab on"  onclick="showTab('addons',this)">📦 Add-ons</div>
-    <div class="tab"     onclick="showTab('pass',this)">💎 Pass</div>
-    <div class="tab"     onclick="showTab('add',this)">➕ Add Mod</div>
-    <div class="tab"     onclick="showTab('settings',this)">⚙️ Settings</div>
+    <div class="tab on" onclick="showTab('addons',this)">📦 Add-ons</div>
+    <div class="tab" onclick="showTab('pass',this)">💎 Pass</div>
+    <div class="tab" onclick="showTab('add',this)">➕ Add Mod</div>
+    <div class="tab" onclick="showTab('settings',this)">⚙️ Settings</div>
   </div>
 
   <div class="content">
 
-    <!-- ADD-ONS -->
     <div class="section on" id="sec-addons">
       <div class="mods-grid" id="grid-addons"></div>
     </div>
 
-    <!-- PASS -->
     <div class="section" id="sec-pass">
       <div class="mods-grid" id="grid-pass"></div>
     </div>
 
-    <!-- ADD MOD -->
     <div class="section" id="sec-add">
       <div class="form-box">
         <h2>ADD NEW MOD</h2>
@@ -203,22 +174,19 @@ select.inp{cursor:pointer}
         </div>
 
         <div class="field">
-          <label>Cover Image *</label>
+          <label>Cover Image * (any size)</label>
           <div class="upload-zone" id="zone-img" onclick="document.getElementById('inp-img').click()">
             <div class="upload-icon">🖼️</div>
-            <p id="img-lbl">Click to upload cover image</p>
+            <p id="img-lbl">Click to upload cover image (any size)</p>
             <input type="file" id="inp-img" accept="image/*" style="display:none" onchange="handleImg(this)">
           </div>
           <img class="img-preview" id="img-preview" src="" alt="">
         </div>
 
         <div class="field">
-          <label>Mod File (.mcaddon / .mcpack) *</label>
-          <div class="upload-zone" id="zone-file" onclick="document.getElementById('inp-file').click()">
-            <div class="upload-icon">📦</div>
-            <p id="file-lbl">Click to upload mod file</p>
-            <input type="file" id="inp-file" accept=".mcaddon,.mcpack,.zip" style="display:none" onchange="handleFile(this)">
-          </div>
+          <label>Download Link *</label>
+          <input class="inp" id="f-link" type="url" placeholder="https://www.mediafire.com/file/... or https://t.me/...">
+          <div class="link-hint">Supports: <span>MediaFire</span> • <span>Telegram</span> • <span>Any direct link</span></div>
         </div>
 
         <div class="status-bar" id="add-status"></div>
@@ -226,7 +194,6 @@ select.inp{cursor:pointer}
       </div>
     </div>
 
-    <!-- SETTINGS -->
     <div class="section" id="sec-settings">
       <div class="settings-box">
         <h2>SETTINGS</h2>
@@ -239,10 +206,6 @@ select.inp{cursor:pointer}
           <input class="inp" id="s-ghrepo" placeholder="8ppai2-code/mcfrom-webapp">
         </div>
         <div class="field">
-          <label>Bot Token (for sending files)</label>
-          <input class="inp" id="s-bottoken" type="password" placeholder="123456:ABC...">
-        </div>
-        <div class="field">
           <label>Change Password</label>
           <input class="inp" id="s-newpw" type="password" placeholder="New password...">
         </div>
@@ -251,8 +214,8 @@ select.inp{cursor:pointer}
     </div>
 
   </div>
-</div>
-
+      </div>
+  
 <!-- EDIT MODAL -->
 <div class="overlay" id="edit-modal">
   <div class="modal">
@@ -266,6 +229,10 @@ select.inp{cursor:pointer}
         <option>Addon</option><option>Decorative</option><option>Tweaks</option>
         <option>Pets</option><option>Combat</option><option>Tools</option>
       </select>
+    </div>
+    <div class="field">
+      <label>Download Link</label>
+      <input class="inp" id="edit-link" type="url" placeholder="https://...">
     </div>
     <div class="field">
       <label>New Cover Image (optional)</label>
@@ -300,25 +267,25 @@ select.inp{cursor:pointer}
 <script>
 const DEFAULT_PW = "mcfrom2026";
 let DB = { mods:[], pass:[], featured:null, settings:{} };
-let coverData=null, fileData=null, fileName=null, editImgData=null;
+let coverData = null;
+let editImgData = null;
 
 const $ = id => document.getElementById(id);
 const toast = (msg, err=false) => {
   const t = document.createElement('div');
-  t.className = 'toast-item'+(err?' err':'');
+  t.className = 'toast-item' + (err?' err':'');
   t.textContent = msg;
   $('toast').appendChild(t);
-  setTimeout(()=>t.remove(), 3000);
+  setTimeout(() => t.remove(), 3500);
 };
-const showStatus = (id,msg,err=false) => {
-  const el=$(id); el.textContent=msg;
-  el.className='status-bar show'+(err?' err':'');
+const showStatus = (id, msg, err=false) => {
+  const el = $(id);
+  el.textContent = msg;
+  el.className = 'status-bar show' + (err?' err':'');
 };
-const hideStatus = id => { $(id).className='status-bar'; };
-
-// ── DB ──────────────────────────────────────────────
+const hideStatus = id => { $(id).className = 'status-bar'; };
 const saveDB = () => localStorage.setItem('mcfrom_db', JSON.stringify(DB));
-const loadDB = () => { const r=localStorage.getItem('mcfrom_db'); if(r) DB=JSON.parse(r); };
+const loadDB = () => { const r = localStorage.getItem('mcfrom_db'); if(r) DB = JSON.parse(r); };
 
 // ── AUTH ────────────────────────────────────────────
 function doLogin() {
@@ -330,56 +297,55 @@ function doLogin() {
     loadDB(); renderAll(); loadSettings();
   } else {
     $('login-err').classList.add('show');
-    $('pw-input').value='';
-    setTimeout(()=>$('login-err').classList.remove('show'),2000);
+    $('pw-input').value = '';
+    setTimeout(() => $('login-err').classList.remove('show'), 2000);
   }
 }
 function logout() {
   $('login').classList.remove('hide');
   $('app').classList.remove('show');
-  $('pw-input').value='';
+  $('pw-input').value = '';
 }
-
+  
 // ── TABS ────────────────────────────────────────────
 function showTab(id, el) {
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('on'));
   el.classList.add('on');
-  $('sec-'+id).classList.add('on');
+  $('sec-' + id).classList.add('on');
 }
 
 function togglePrice() {
-  $('price-field').style.display = $('f-section').value==='pass-paid' ? 'flex' : 'none';
+  $('price-field').style.display = $('f-section').value === 'pass-paid' ? 'flex' : 'none';
 }
 
 // ── RENDER ──────────────────────────────────────────
 function renderAll() {
   renderGrid('addons', DB.mods);
-  renderGrid('pass',   DB.pass);
+  renderGrid('pass', DB.pass);
   $('stat-mods').textContent = DB.mods.length;
   $('stat-pass').textContent = DB.pass.length;
 }
 
 function renderGrid(sec, list) {
-  const g = $('grid-'+sec);
+  const g = $('grid-' + sec);
   if (!list || !list.length) {
-    g.innerHTML=`<div class="empty"><div class="empty-icon">📭</div><p>No mods yet. Add one!</p></div>`;
+    g.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><p>No mods yet. Add one!</p></div>`;
     return;
   }
-  g.innerHTML = list.map(m=>`
-    <div class="mod-card ${DB.featured===m.id?'featured':''}">
-      <img class="mod-card-img" src="${m.img||''}" alt="${m.name}"
-           onerror="this.style.height='60px'">
+  g.innerHTML = list.map(m => `
+    <div class="mod-card ${DB.featured === m.id ? 'featured' : ''}">
+      <img class="mod-card-img" src="${m.img || ''}" alt="${m.name}" onerror="this.style.height='60px'">
       <div class="mod-card-body">
         <div class="mod-card-name">${m.name}</div>
         <div class="mod-card-meta">
-          <span class="tag">${m.tag||'Addon'}</span>
-          ${m.price?`<span class="tag paid">⭐ ${m.price}</span>`:''}
-          ${DB.featured===m.id?`<span class="tag feat">⭐ Featured</span>`:''}
+          <span class="tag">${m.tag || 'Addon'}</span>
+          ${m.price ? `<span class="tag paid">⭐ ${m.price}</span>` : ''}
+          ${DB.featured === m.id ? `<span class="tag feat">⭐ Featured</span>` : ''}
+          ${m.link ? `<span class="tag">🔗 Link</span>` : ''}
         </div>
         <div class="mod-actions">
-          <div class="ic-btn pin ${DB.featured===m.id?'on':''}"
-               onclick="pinMod('${m.id}')">📌 Pin</div>
+          <div class="ic-btn pin ${DB.featured === m.id ? 'on' : ''}" onclick="pinMod('${m.id}')">📌</div>
           <div class="ic-btn" onclick="openEdit('${m.id}','${sec}')">✏️ Edit</div>
           <div class="ic-btn del" onclick="openDelete('${m.id}','${sec}')">🗑️</div>
         </div>
@@ -390,193 +356,220 @@ function renderGrid(sec, list) {
 
 // ── PIN ─────────────────────────────────────────────
 async function pinMod(id) {
-  DB.featured = DB.featured===id ? null : id;
+  DB.featured = DB.featured === id ? null : id;
   saveDB(); renderAll();
-  toast(DB.featured===id ? '⭐ Pinned as Mod of the Week!' : '📌 Unpinned');
+  toast(DB.featured === id ? '⭐ Pinned as Mod of the Week!' : '📌 Unpinned');
   await syncGitHub();
 }
 
-// ── FILE HANDLERS ───────────────────────────────────
+// ── IMAGE HANDLER ────────────────────────────────────
 function handleImg(inp) {
-  const f=inp.files[0]; if(!f)return;
-  const r=new FileReader();
-  r.onload=e=>{
-    coverData=e.target.result;
-    $('img-lbl').textContent='✅ '+f.name;
+  const f = inp.files[0]; if(!f) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    coverData = e.target.result;
+    $('img-lbl').textContent = '✅ ' + f.name;
     $('zone-img').classList.add('done');
-    const p=$('img-preview'); p.src=coverData; p.classList.add('show');
+    const p = $('img-preview');
+    p.src = coverData;
+    p.classList.add('show');
   };
-  r.readAsDataURL(f);
+  reader.readAsDataURL(f);
 }
-function handleFile(inp) {
-  const f=inp.files[0]; if(!f)return;
-  fileName=f.name;
-  const r=new FileReader();
-  r.onload=e=>{
-    fileData=e.target.result;
-    $('file-lbl').textContent='✅ '+f.name;
-    $('zone-file').classList.add('done');
-  };
-  r.readAsDataURL(f);
-}
+
 function handleEditImg(inp) {
-  const f=inp.files[0]; if(!f)return;
-  const r=new FileReader();
-  r.onload=e=>{ editImgData=e.target.result; $('edit-img-lbl').textContent='✅ '+f.name; };
-  r.readAsDataURL(f);
-}
-
-// ── ADD MOD ─────────────────────────────────────────
+  const f = inp.files[0]; if(!f) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    editImgData = e.target.result;
+    $('edit-img-lbl').textContent = '✅ ' + f.name;
+  };
+  reader.readAsDataURL(f);
+  }
+  
+// ── ADD MOD ──────────────────────────────────────────
 async function addMod() {
-  const name=    $('f-name').value.trim();
-  const desc=    $('f-desc').value.trim();
-  const tag=     $('f-tag').value;
-  const section= $('f-section').value;
-  const price=   $('f-price').value;
+  const name    = $('f-name').value.trim();
+  const desc    = $('f-desc').value.trim();
+  const tag     = $('f-tag').value;
+  const section = $('f-section').value;
+  const price   = $('f-price').value;
+  const link    = $('f-link').value.trim();
 
-  if(!name)      { toast('❌ Name required',true); return; }
-  if(!desc)      { toast('❌ Description required',true); return; }
-  if(!coverData) { toast('❌ Cover image required',true); return; }
-  if(!fileData)  { toast('❌ Mod file required',true); return; }
+  if (!name)      { toast('❌ Name required', true); return; }
+  if (!desc)      { toast('❌ Description required', true); return; }
+  if (!coverData) { toast('❌ Cover image required', true); return; }
+  if (!link)      { toast('❌ Download link required', true); return; }
 
-  $('add-btn').disabled=true;
-  showStatus('add-status','⏳ Saving...');
+  $('add-btn').disabled = true;
+  showStatus('add-status', '⏳ Saving...');
 
-  const id='mod_'+Date.now();
-  const mod={ id, name, desc, tag,
-    img: coverData, file: fileData, fileName,
-    price: section==='pass-paid'?(price||'99'):null,
-    section, likes:0, date:new Date().toISOString() };
+  const id  = 'mod_' + Date.now();
+  const mod = {
+    id, name, desc, tag, link,
+    img:   coverData,
+    price: section === 'pass-paid' ? (price || '99') : null,
+    section, likes: 0,
+    date:  new Date().toISOString(),
+  };
 
-  if(section==='addons') DB.mods.push(mod);
-  else                   DB.pass.push(mod);
+  if (section === 'addons') DB.mods.push(mod);
+  else                      DB.pass.push(mod);
 
   saveDB(); renderAll();
-  showStatus('add-status','⏳ Syncing to GitHub...');
-  await syncGitHub();
-  showStatus('add-status','✅ Mod added!');
-  toast('✅ '+name+' added!');
-  resetForm();
-  $('add-btn').disabled=false;
+  showStatus('add-status', '⏳ Syncing to GitHub...');
+  const ok = await syncGitHub();
+  if (ok) {
+    showStatus('add-status', '✅ Mod added successfully!');
+    toast('✅ ' + name + ' added!');
+    resetForm();
+  }
+  $('add-btn').disabled = false;
 
-  // Go to relevant tab
-  const tabs=document.querySelectorAll('.tab');
-  if(section==='addons') showTab('addons',tabs[0]);
-  else                   showTab('pass',tabs[1]);
+  const tabs = document.querySelectorAll('.tab');
+  if (section === 'addons') showTab('addons', tabs[0]);
+  else                      showTab('pass', tabs[1]);
 }
 
 function resetForm() {
-  $('f-name').value=''; $('f-desc').value=''; $('f-price').value='';
-  $('img-lbl').textContent='Click to upload cover image';
-  $('file-lbl').textContent='Click to upload mod file';
-  ['zone-img','zone-file'].forEach(id=>$(id).classList.remove('done'));
+  $('f-name').value = '';
+  $('f-desc').value = '';
+  $('f-price').value = '';
+  $('f-link').value = '';
+  $('img-lbl').textContent = 'Click to upload cover image (any size)';
+  $('zone-img').classList.remove('done');
   $('img-preview').classList.remove('show');
-  coverData=null; fileData=null; fileName=null;
-  setTimeout(()=>hideStatus('add-status'),3000);
+  coverData = null;
+  setTimeout(() => hideStatus('add-status'), 3000);
 }
 
-// ── EDIT ────────────────────────────────────────────
+// ── EDIT ─────────────────────────────────────────────
 function openEdit(id, sec) {
-  const list=sec==='addons'?DB.mods:DB.pass;
-  const m=list.find(x=>x.id===id); if(!m)return;
-  $('edit-id').value=id+'|'+sec;
-  $('edit-name').value=m.name;
-  $('edit-desc').value=m.desc;
-  $('edit-tag').value=m.tag;
-  editImgData=null;
-  $('edit-img-lbl').textContent='Click to replace image';
+  const list = sec === 'addons' ? DB.mods : DB.pass;
+  const m = list.find(x => x.id === id); if(!m) return;
+  $('edit-id').value    = id + '|' + sec;
+  $('edit-name').value  = m.name;
+  $('edit-desc').value  = m.desc;
+  $('edit-tag').value   = m.tag;
+  $('edit-link').value  = m.link || '';
+  editImgData = null;
+  $('edit-img-lbl').textContent = 'Click to replace image';
   $('edit-modal').classList.add('show');
 }
+
 async function saveEdit() {
-  const [id,sec]=$('edit-id').value.split('|');
-  const list=sec==='addons'?DB.mods:DB.pass;
-  const m=list.find(x=>x.id===id); if(!m)return;
-  m.name=$('edit-name').value.trim()||m.name;
-  m.desc=$('edit-desc').value.trim()||m.desc;
-  m.tag=$('edit-tag').value;
-  if(editImgData) m.img=editImgData;
+  const [id, sec] = $('edit-id').value.split('|');
+  const list = sec === 'addons' ? DB.mods : DB.pass;
+  const m = list.find(x => x.id === id); if(!m) return;
+  m.name = $('edit-name').value.trim() || m.name;
+  m.desc = $('edit-desc').value.trim() || m.desc;
+  m.tag  = $('edit-tag').value;
+  m.link = $('edit-link').value.trim() || m.link;
+  if (editImgData) m.img = editImgData;
   saveDB(); renderAll();
-  showStatus('edit-status','⏳ Syncing...');
+  showStatus('edit-status', '⏳ Syncing...');
   await syncGitHub();
-  closeModal(); toast('✅ Mod updated!');
+  closeModal();
+  toast('✅ Mod updated!');
 }
 
-// ── DELETE ──────────────────────────────────────────
-function openDelete(id,sec) {
-  $('del-id').value=id+'|'+sec;
+// ── DELETE ───────────────────────────────────────────
+function openDelete(id, sec) {
+  $('del-id').value = id + '|' + sec;
   $('del-modal').classList.add('show');
 }
+
 async function confirmDelete() {
-  const [id,sec]=$('del-id').value.split('|');
-  if(sec==='addons') DB.mods=DB.mods.filter(m=>m.id!==id);
-  else               DB.pass=DB.pass.filter(m=>m.id!==id);
-  if(DB.featured===id) DB.featured=null;
+  const [id, sec] = $('del-id').value.split('|');
+  if (sec === 'addons') DB.mods = DB.mods.filter(m => m.id !== id);
+  else                  DB.pass = DB.pass.filter(m => m.id !== id);
+  if (DB.featured === id) DB.featured = null;
   saveDB(); renderAll(); closeModal();
-  await syncGitHub(); toast('🗑️ Mod deleted');
+  await syncGitHub();
+  toast('🗑️ Mod deleted');
 }
 
 function closeModal() {
-  document.querySelectorAll('.overlay').forEach(o=>o.classList.remove('show'));
+  document.querySelectorAll('.overlay').forEach(o => o.classList.remove('show'));
+  }
+  
+// ── SETTINGS ─────────────────────────────────────────
+function loadSettings() {
+  const s = DB.settings || {};
+  $('s-ghtoken').value = s.ghToken || '';
+  $('s-ghrepo').value  = s.ghRepo  || '8ppai2-code/mcfrom-webapp';
 }
 
-// ── SETTINGS ────────────────────────────────────────
-function loadSettings() {
-  const s=DB.settings||{};
-  $('s-ghtoken').value= s.ghToken||'';
-  $('s-ghrepo').value=  s.ghRepo||'8ppai2-code/mcfrom-webapp';
-  $('s-bottoken').value=s.botToken||'';
-}
 function saveSettings() {
-  DB.settings={
+  DB.settings = {
     ghToken: $('s-ghtoken').value.trim(),
     ghRepo:  $('s-ghrepo').value.trim(),
-    botToken:$('s-bottoken').value.trim(),
   };
-  const np=$('s-newpw').value.trim();
-  if(np){ localStorage.setItem('mcfrom_pw',np); $('s-newpw').value=''; toast('🔒 Password changed!'); }
-  saveDB(); toast('💾 Settings saved!');
+  const np = $('s-newpw').value.trim();
+  if (np) {
+    localStorage.setItem('mcfrom_pw', np);
+    $('s-newpw').value = '';
+    toast('🔒 Password changed!');
+  }
+  saveDB();
+  toast('💾 Settings saved!');
 }
 
-// ── GITHUB SYNC ─────────────────────────────────────
+// ── GITHUB SYNC ──────────────────────────────────────
 async function syncGitHub() {
-  const s=DB.settings||{};
-  if(!s.ghToken||!s.ghRepo){ toast('⚠️ Add GitHub token in Settings!',true); return; }
+  const s = DB.settings || {};
+  if (!s.ghToken || !s.ghRepo) {
+    toast('⚠️ Add GitHub token in Settings first!', true);
+    return false;
+  }
 
   try {
-    // Build clean mods.json (no raw file data)
+    // Build clean mods.json — images stored as base64, links as URLs
     const clean = {
       featured: DB.featured,
-      addons: DB.mods.map(m=>({id:m.id,name:m.name,desc:m.desc,tag:m.tag,img:m.img,fileName:m.fileName,date:m.date,likes:m.likes})),
-      pass:   DB.pass.map(m=>({id:m.id,name:m.name,desc:m.desc,tag:m.tag,img:m.img,price:m.price,fileName:m.fileName,date:m.date,likes:m.likes})),
+      addons: DB.mods.map(m => ({
+        id: m.id, name: m.name, desc: m.desc, tag: m.tag,
+        img: m.img, link: m.link, date: m.date, likes: m.likes,
+      })),
+      pass: DB.pass.map(m => ({
+        id: m.id, name: m.name, desc: m.desc, tag: m.tag,
+        img: m.img, link: m.link, price: m.price, date: m.date, likes: m.likes,
+      })),
     };
 
-    const content = btoa(unescape(encodeURIComponent(JSON.stringify(clean,null,2))));
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(clean, null, 2))));
     const url = `https://api.github.com/repos/${s.ghRepo}/contents/mods.json`;
 
-    let sha='';
+    let sha = '';
     try {
-      const r=await fetch(url,{headers:{Authorization:'token '+s.ghToken}});
-      if(r.ok){ const d=await r.json(); sha=d.sha; }
-    } catch(e){}
+      const r = await fetch(url, { headers: { Authorization: 'token ' + s.ghToken } });
+      if (r.ok) { const d = await r.json(); sha = d.sha; }
+    } catch(e) {}
 
-    const body={message:'Update mods '+new Date().toLocaleString(),content};
-    if(sha) body.sha=sha;
+    const body = { message: 'Update mods ' + new Date().toLocaleString(), content };
+    if (sha) body.sha = sha;
 
-    const res=await fetch(url,{
-      method:'PUT',
-      headers:{Authorization:'token '+s.ghToken,'Content-Type':'application/json'},
-      body:JSON.stringify(body),
+    const res = await fetch(url, {
+      method: 'PUT',
+      headers: { Authorization: 'token ' + s.ghToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
     });
 
-    if(res.ok) toast('☁️ Synced to GitHub!');
-    else       toast('❌ GitHub sync failed',true);
-  } catch(e){ toast('❌ '+e.message,true); }
+    if (res.ok) { toast('☁️ Synced to GitHub!'); return true; }
+    else {
+      const err = await res.json();
+      toast('❌ ' + (err.message || 'GitHub sync failed'), true);
+      return false;
+    }
+  } catch(e) {
+    toast('❌ ' + e.message, true);
+    return false;
+  }
 }
 
-// ── CLOSE ON ESC / OVERLAY CLICK ────────────────────
-document.addEventListener('keydown',e=>{ if(e.key==='Escape')closeModal(); });
-document.querySelectorAll('.overlay').forEach(o=>{
-  o.addEventListener('click',e=>{ if(e.target===o)closeModal(); });
+document.addEventListener('keydown', e => { if(e.key === 'Escape') closeModal(); });
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if(e.target === o) closeModal(); });
 });
 </script>
 </body>
