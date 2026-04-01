@@ -1,5 +1,16 @@
 {
   "featured": null,
-  "addons": [],
+  "addons": [
+    {
+      "id": "mod_1775035246917",
+      "name": "Hhd",
+      "desc": "Hhd",
+      "tag": "Addon",
+      "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAP0lEQVR4AWNhwAL+AwEjEIDYLNgkkfks+CRRFGCTRFEgKyvL8PjxY9wKnjx5wghU9B9dEYobsCnC8AVMEYwPAHeaJHDus60JAAAAAElFTkSuQmCC",
+      "fileName": "cosmic_wings_v4.mcpack",
+      "date": "2026-04-01T09:20:46.930Z",
+      "likes": 0
+    }
+  ],
   "pass": []
 }
