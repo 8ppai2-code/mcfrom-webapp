@@ -102,7 +102,7 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;mi
 .gbtn{background:var(--accent);color:#000;font-family:'Press Start 2P',monospace;font-size:8px;border:none;border-radius:8px;padding:13px;cursor:pointer;letter-spacing:.5px;transition:opacity .2s}
 .gbtn:disabled{opacity:.35;cursor:not-allowed}
 .sbox{background:var(--card2);border-radius:8px;padding:11px 13px;font-family:'VT323',monospace;font-size:18px;color:var(--accent);display:none}
-.sbox.show{display:block}
+.sbox.show{display:block} 
 
 /* NAV */
 #nav{position:fixed;bottom:0;left:0;right:0;height:var(--nav);background:rgba(8,8,8,.96);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:0 6px;z-index:1000}
@@ -280,13 +280,14 @@ body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;mi
     <div class="niw"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABkAAAATCAYAAABlcqYFAAAA30lEQVR4AWP59+nKf8avNxjIBYySIYyE1LCALbhbT7Yl/19s/M8o4Y/XIhayTYeBO1UELaLcEiIsQrFEPeEHUWbeXMBBkkUEfXLzXDiDutFKoizHZRFBS4i2AI9FWC0BuZ7h+U0Gde8LpFmAwyLsPgFawPCa/LyDbhFWS8j2ARaLDk1U/E9UxIMBGcG358grBteK19h9ggHICD6YBSA2YUsotIAoS8gNImQxFEuw5mQKLcCwhBYWUM0SfBaALfn/n5GBYK1DgQVgSy7v6WJ49ewVWRb8+/uLwb36I0E3AgD+jII+1xd5JAAAAABJRU5ErkJggg==" alt=""></div>
     <span class="nlabel">Pass</span>
   </div>
-</nav>
-
+  </nav>
+  
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 // ── STATE ──────────────────────────────────────────
-const MODS = [];
-const PASS_MODS = [];
+const GITHUB_MODS_URL = "https://raw.githubusercontent.com/8ppai2-code/mcfrom-webapp/main/mods.json";
+let MODS = [];
+let PASS_MODS = [];
 let currentMod = null;
 let featuredMod = null;
 let prevPage = 'addons';
@@ -322,10 +323,30 @@ function goBack() {
   showPage(prevPage);
 }
 
-// ── LOADING ─────────────────────────────────────────
-window.addEventListener('load', () => {
+// ── LOADING + FETCH MODS ────────────────────────────
+window.addEventListener('load', async () => {
+  try {
+    const res = await fetch(GITHUB_MODS_URL + '?t=' + Date.now());
+    if (res.ok) {
+      const data = await res.json();
+      MODS      = data.addons || [];
+      PASS_MODS = data.pass   || [];
+      featuredMod = MODS.find(m => m.id === data.featured) || null;
+
+      // Show featured card
+      if (featuredMod) {
+        document.getElementById('feat-img').src  = featuredMod.img || '';
+        document.getElementById('feat-name').textContent = featuredMod.name;
+        document.getElementById('featured-wrap').style.display = 'block';
+      }
+    }
+  } catch(e) {
+    console.log('Could not load mods:', e);
+  }
+
   renderMods();
   renderPass();
+
   setTimeout(() => {
     document.getElementById('loading').classList.add('hide');
     setTimeout(() => document.getElementById('loading').remove(), 700);
@@ -434,13 +455,13 @@ function shareMod() {
 
 function downloadMod() {
   if (!currentMod) return;
-  if (currentMod.file) {
-    window.Telegram?.WebApp?.sendData(JSON.stringify({ action:'download', id: currentMod.id }));
+  if (window.Telegram?.WebApp) {
+    window.Telegram.WebApp.sendData(JSON.stringify({ action: 'download', id: currentMod.id, name: currentMod.name }));
   } else {
-    alert('File not available yet.');
+    alert('Open this app inside Telegram to download.');
   }
 }
-
+  
 // ── CUSTOM PAINTING TOOL ────────────────────────────
 function handleImg(input) {
   imgFile = input.files[0];
@@ -523,8 +544,8 @@ async function generatePack() {
   }
 
   btn.disabled = false;
-}
-
+  }
+  
 // ── TELEGRAM WEBAPP INIT ────────────────────────────
 if (window.Telegram?.WebApp) {
   const tg = window.Telegram.WebApp;
