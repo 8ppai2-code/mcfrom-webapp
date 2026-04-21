@@ -35,11 +35,10 @@ const isAdmin  = id => id === ADMIN_ID;
 // زر 1: Browse Add-ons — primary (أزرق) عبر web_app
 // زر 4: أزرار اللغة ملونة: Arabic=success, English=primary, Русский=danger
 const langKB = () => ({ inline_keyboard: [
-  [{ text:"🟢 🇸🇦   Arabic",  callback_data:"lang_ar" }],  // success = أخضر
-  [{ text:"🔵 🇬🇧   English", callback_data:"lang_en" }],  // primary = أزرق
-  [{ text:"🔴 🇷🇺   Русский", callback_data:"lang_ru" }],  // danger  = أحمر
+  [{ text:"🇸🇦   Arabic",  callback_data:"lang_ar", style:"success" }], // 🟢 أخضر
+  [{ text:"🇬🇧   English", callback_data:"lang_en", style:"primary" }], // 🔵 أزرق
+  [{ text:"🇷🇺   Русский", callback_data:"lang_ru", style:"danger"  }], // 🔴 أحمر
 ]});
-
 // ملاحظة: تليجرام لا يدعم ألوان حقيقية للأزرار — نستخدم إيموجي للتمييز البصري
 
 const TEXTS = {
