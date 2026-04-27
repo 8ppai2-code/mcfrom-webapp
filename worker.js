@@ -3,9 +3,8 @@
 //  Bot + API + URcoins + Tasks + AdsGram
 // ═══════════════════════════════════════════════════
 
-const BOT_TOKEN      = "8651775315:AAEAec6kxUsNl_B7mWSBAAdp5NJgr6-GhQg";
-const ADMIN_ID       = 7692551897;
-const WEBHOOK_SECRET = "mcfrom_secret_2026";
+let BOT_TOKEN, WEBHOOK_SECRET;
+const ADMIN_ID = 7692551897;
 const WEBAPP_URL     = "https://8ppai2-code.github.io/mcfrom-webapp/";
 const API_SECRET     = "mcfrom_api_2026";
 const TON_ADDRESS    = "UQDS-hym5d6f4UReh36szpSj4_EmnKuuJJGA2uiwExm2pq0j";
@@ -683,6 +682,8 @@ async function handleAPI(request, env, path) {
 // ── MAIN FETCH ─────────────────────────────────────
 export default {
   async fetch(request, env) {
+    BOT_TOKEN = env.BOT_TOKEN;
+WEBHOOK_SECRET = env.WEBHOOK_SECRET;
     const url    = new URL(request.url);
     const path   = url.pathname;
 
