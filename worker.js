@@ -113,7 +113,7 @@ async function addCoins(env, userId, amount, desc="reward") {
   } catch(e) {}
 }
 
-// ── KEYBOARDS ──────────────────────────────────────
+// ── KEYBOARDS ─────────────────────────────────────
 const langKB = () => ({ inline_keyboard: [
   [{ text: " 🇸🇦   Arabic",  callback_data: "lang_ar", style: "primary" }],
   [{ text: " 🇬🇧   English", callback_data: "lang_en", style: "primary" }],
