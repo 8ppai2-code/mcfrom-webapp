@@ -12,7 +12,7 @@ const URCOIN_PER_TON    = 58;      // 1 TON ≈ 12 URcoin per $0.207
 const TASK_REWARD       = 5;       // URcoins per task completed
 const AD_REWARD         = 5;       // URcoins per ad watched
 
-// ── CORS ───────────────────────────────────────────
+// ── CORS ──────────────────────────────────────────
 const CORS = {
   "Access-Control-Allow-Origin":  "*",
   "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
