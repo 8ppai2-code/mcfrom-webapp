@@ -27,10 +27,14 @@ const json = (d, s=200) => new Response(JSON.stringify(d), { status:s, headers:C
 
 // ── TELEGRAM API ───────────────────────────────────
 const tgAPI = (m, b) => fetch(`https://api.telegram.org/bot${BOT_TOKEN}/${m}`, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify(b)
-}).then(r => r.json());
+const tgAPI = (m, b) => {
+  const PROXY_URL = "https://sweet-tooth-9e93.8ppai2.workers.dev"; // رابط الوكيل
+  return fetch(`${PROXY_URL}/bot${BOT_TOKEN}/${m}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(b)
+  }).then(r => r.json());
+};
 
 const send      = (id, text, extra={})       => tgAPI("sendMessage",     { chat_id:id, text, parse_mode:"Markdown", ...extra });
 const sendPhoto = (id, photo, caption, extra={}) => tgAPI("sendPhoto",   { chat_id:id, photo, caption, parse_mode:"Markdown", ...extra });
