@@ -109,9 +109,9 @@ async function addCoins(env, userId, amount, desc="reward") {
 
 // ── KEYBOARDS ──────────────────────────────────────
 const langKB = () => ({ inline_keyboard: [
-  [{ text: " 🇸🇦   Arabic",  callback_data: "lang_ar" }],
-  [{ text: " 🇬🇧   English", callback_data: "lang_en" }],
-  [{ text: " 🇷🇺   Русский", callback_data: "lang_ru" }],
+  [{ text: " 🇸🇦   Arabic",  callback_data: "lang_ar", style: "primary" }],
+  [{ text: " 🇬🇧   English", callback_data: "lang_en", style: "primary" }],
+  [{ text: " 🇷🇺   Русский", callback_data: "lang_ru", style: "primary" }],
 ]});
 
 const TEXTS = {
@@ -151,14 +151,14 @@ const TEXTS = {
 };
 
 const menuKB = lang => ({ inline_keyboard: [
-  [{ text: TEXTS[lang].browse,  web_app: { url: WEBAPP_URL + "?page=addons" } }],
+  [{ text: TEXTS[lang].browse,  web_app: { url: WEBAPP_URL + "?page=addons" }, style: "primary" }],
   [{ text: TEXTS[lang].tools,   web_app: { url: WEBAPP_URL + "?page=tools"  } }],
   [
     { text: TEXTS[lang].earn,    web_app: { url: WEBAPP_URL + "?page=earn"   } },
     { text: TEXTS[lang].support, callback_data: "menu_support" },
   ],
   [{ text: TEXTS[lang].lang, callback_data: "menu_lang" }],
-]});// ── HANDLE /start ──────────────────────────────────
+]});;// ── HANDLE /start ──────────────────────────────────
 async function handleStart(msg, env) {
   const uid  = msg.from.id;
   const name = getName(msg.from);
