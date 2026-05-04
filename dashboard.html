@@ -211,6 +211,14 @@ select.inp{cursor:pointer}
           <input class="inp" id="s-secret" type="password" placeholder="mcfrom_api_2026">
         </div>
         <div class="field">
+          <label>GitHub Token</label>
+          <input class="inp" id="s-ghtoken" type="password" placeholder="ghp_xxxxxxxxxxxx">
+        </div>
+        <div class="field">
+          <label>GitHub Repo</label>
+          <input class="inp" id="s-ghrepo" placeholder="8ppai2-code/mcfrom-webapp">
+        </div>
+        <div class="field">
           <label>Change Password</label>
           <input class="inp" id="s-newpw" type="password" placeholder="New password...">
         </div>
@@ -286,8 +294,10 @@ const hideStatus = id => { $(id).className = 'status-bar'; };
 const showLoading = () => $('loading-overlay').classList.add('show');
 const hideLoading = () => $('loading-overlay').classList.remove('show');
 const saveSettings = () => {
-  settings.api    = $('s-api').value.trim()    || settings.api;
-  settings.secret = $('s-secret').value.trim() || settings.secret;
+  settings.api      = $('s-api').value.trim()     || settings.api;
+  settings.secret   = $('s-secret').value.trim()  || settings.secret;
+  settings.ghToken  = $('s-ghtoken').value.trim() || settings.ghToken || '';
+  settings.ghRepo   = $('s-ghrepo').value.trim()  || settings.ghRepo  || '8ppai2-code/mcfrom-webapp';
   const np = $('s-newpw').value.trim();
   if (np) { localStorage.setItem('mcfrom_pw', np); $('s-newpw').value=''; toast('🔒 Password changed!'); }
   localStorage.setItem('mcfrom_settings', JSON.stringify(settings));
@@ -316,10 +326,14 @@ function logout() {
 }
 function loadSettings() {
   const s = JSON.parse(localStorage.getItem('mcfrom_settings') || '{}');
-  if (s.api)    settings.api    = s.api;
-  if (s.secret) settings.secret = s.secret;
-  $('s-api').value    = settings.api;
-  $('s-secret').value = settings.secret;
+  if (s.api)     settings.api     = s.api;
+  if (s.secret)  settings.secret  = s.secret;
+  if (s.ghToken) settings.ghToken = s.ghToken;
+  if (s.ghRepo)  settings.ghRepo  = s.ghRepo;
+  $('s-api').value     = settings.api;
+  $('s-secret').value  = settings.secret;
+  $('s-ghtoken').value = settings.ghToken || '';
+  $('s-ghrepo').value  = settings.ghRepo  || '8ppai2-code/mcfrom-webapp';
 }
 
 // ── TABS ────────────────────────────────────────────
@@ -424,6 +438,7 @@ async function pinMod(id) {
 }
 
 let coverData = null;
+
 function handleImg(inp) {
   const f = inp.files[0]; if(!f) return;
   const r = new FileReader();
@@ -434,8 +449,8 @@ function handleImg(inp) {
     const p = $('img-preview'); p.src = coverData; p.classList.add('show');
   };
   r.readAsDataURL(f);
-  }
-  
+}
+
 function previewImg() {}
 function previewEditImg() {
   const url = $('edit-img').value.trim();
@@ -453,41 +468,41 @@ async function addMod() {
   const price   = $('f-price').value;
   const link    = $('f-link').value.trim();
 
-  if (!name)      { toast('❌ Name required', true); return; }
-  if (!coverData) { toast('❌ Cover image required', true); return; }
-  if (!link)      { toast('❌ Download link required', true); return; }
+  if (!name)     { toast('❌ Name required', true); return; }
+  if (!coverData){ toast('❌ Cover image required', true); return; }
+  if (!link)     { toast('❌ Download link required', true); return; }
+
+  const ghToken = settings.ghToken;
+  const ghRepo  = settings.ghRepo || '8ppai2-code/mcfrom-webapp';
+
+  if (!ghToken) { toast('❌ Add GitHub token in Settings first!', true); return; }
 
   $('add-btn').disabled = true;
   showStatus('add-status', '⏳ Uploading image to GitHub...');
   showLoading();
 
   try {
-    // 1️⃣ رفع الصورة على GitHub
-    const ghToken  = DB.settings?.ghToken;
-    const ghRepo   = DB.settings?.ghRepo || '8ppai2-code/mcfrom-webapp';
-    const imgId    = 'mod_' + Date.now();
-    const imgExt   = coverData.split(';')[0].split('/')[1] || 'png';
-    const imgPath  = `images/${imgId}.${imgExt}`;
-    const imgB64   = coverData.split(',')[1];
+    // Upload image to GitHub
+    const imgId  = 'img_' + Date.now();
+    const imgExt = coverData.split(';')[0].split('/')[1] || 'png';
+    const imgPath = 'images/' + imgId + '.' + imgExt;
+    const imgB64  = coverData.split(',')[1];
 
-    if (!ghToken) { toast('❌ Add GitHub token in Settings!', true); hideLoading(); $('add-btn').disabled=false; return; }
-
-    // Get SHA if exists
     let sha = '';
     try {
-      const r = await fetch(`https://api.github.com/repos/${ghRepo}/contents/${imgPath}`, {
+      const r = await fetch('https://api.github.com/repos/' + ghRepo + '/contents/' + imgPath, {
         headers: { Authorization: 'token ' + ghToken }
       });
       if (r.ok) { const d = await r.json(); sha = d.sha; }
     } catch(e) {}
 
-    const body = { message: 'Add image ' + imgId, content: imgB64 };
-    if (sha) body.sha = sha;
+    const ghBody = { message: 'Add mod image ' + imgId, content: imgB64 };
+    if (sha) ghBody.sha = sha;
 
-    const ghRes = await fetch(`https://api.github.com/repos/${ghRepo}/contents/${imgPath}`, {
+    const ghRes = await fetch('https://api.github.com/repos/' + ghRepo + '/contents/' + imgPath, {
       method: 'PUT',
       headers: { Authorization: 'token ' + ghToken, 'Content-Type': 'application/json' },
-      body: JSON.stringify(body)
+      body: JSON.stringify(ghBody)
     });
 
     if (!ghRes.ok) {
@@ -495,12 +510,10 @@ async function addMod() {
       throw new Error(err.message || 'GitHub upload failed');
     }
 
-    // 2️⃣ رابط الصورة من GitHub
-    const img_url = `https://raw.githubusercontent.com/${ghRepo}/main/${imgPath}`;
+    const img_url = 'https://raw.githubusercontent.com/' + ghRepo + '/main/' + imgPath;
 
     showStatus('add-status', '⏳ Saving to database...');
 
-    // 3️⃣ حفظ البيانات في D1
     const res = await apiFetch('/api/mods', 'POST', {
       name, desc, tag, section, img_url, link,
       price: section === 'pass-paid' ? (price || '20') : null,
@@ -524,7 +537,7 @@ async function addMod() {
     toast('❌ ' + e.message, true);
   }
   $('add-btn').disabled = false;
-  }
+}
 
 function resetForm() {
   ['f-name','f-desc','f-price','f-link'].forEach(id => $(id).value = '');
