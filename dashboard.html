@@ -426,33 +426,16 @@ async function pinMod(id) {
 let coverData = null;
 function handleImg(inp) {
   const f = inp.files[0]; if(!f) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const MAX = 1200;
-      let w = img.width, h = img.height;
-      if (w > MAX) { h = h * MAX / w; w = MAX; }
-      if (h > MAX) { w = w * MAX / h; h = MAX; }
-      canvas.width = w; canvas.height = h;
-      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-      canvas.toBlob(blob => {
-        const r2 = new FileReader();
-        r2.onload = e2 => {
-          coverData = e2.target.result;
-          $('img-lbl').textContent = '✅ ' + f.name + ' (' + Math.round(blob.size/1024) + 'KB)';
-          $('zone-img').style.borderColor = 'var(--ac)';
-          const p = $('img-preview'); p.src = coverData; p.classList.add('show');
-        };
-        r2.readAsDataURL(blob);
-      }, 'image/webp', 0.92);
-    };
-    img.src = e.target.result;
+  const r = new FileReader();
+  r.onload = e => {
+    coverData = e.target.result;
+    $('img-lbl').textContent = '✅ ' + f.name;
+    $('zone-img').style.borderColor = 'var(--ac)';
+    const p = $('img-preview'); p.src = coverData; p.classList.add('show');
   };
-  reader.readAsDataURL(f);
-}
-
+  r.readAsDataURL(f);
+  }
+  
 function previewImg() {}
 function previewEditImg() {
   const url = $('edit-img').value.trim();
@@ -468,22 +451,58 @@ async function addMod() {
   const tag     = $('f-tag').value;
   const section = $('f-section').value;
   const price   = $('f-price').value;
-  const img_url = $('f-img').value.trim();
   const link    = $('f-link').value.trim();
 
-  if (!name)     { toast('❌ Name required', true); return; }
-  if (!coverData){ toast('❌ Cover image required', true); return; }
-  if (!link)     { toast('❌ Download link required', true); return; }
+  if (!name)      { toast('❌ Name required', true); return; }
+  if (!coverData) { toast('❌ Cover image required', true); return; }
+  if (!link)      { toast('❌ Download link required', true); return; }
 
   $('add-btn').disabled = true;
-  showStatus('add-status', '⏳ Saving to database...');
+  showStatus('add-status', '⏳ Uploading image to GitHub...');
   showLoading();
 
   try {
+    // 1️⃣ رفع الصورة على GitHub
+    const ghToken  = DB.settings?.ghToken;
+    const ghRepo   = DB.settings?.ghRepo || '8ppai2-code/mcfrom-webapp';
+    const imgId    = 'mod_' + Date.now();
+    const imgExt   = coverData.split(';')[0].split('/')[1] || 'png';
+    const imgPath  = `images/${imgId}.${imgExt}`;
+    const imgB64   = coverData.split(',')[1];
+
+    if (!ghToken) { toast('❌ Add GitHub token in Settings!', true); hideLoading(); $('add-btn').disabled=false; return; }
+
+    // Get SHA if exists
+    let sha = '';
+    try {
+      const r = await fetch(`https://api.github.com/repos/${ghRepo}/contents/${imgPath}`, {
+        headers: { Authorization: 'token ' + ghToken }
+      });
+      if (r.ok) { const d = await r.json(); sha = d.sha; }
+    } catch(e) {}
+
+    const body = { message: 'Add image ' + imgId, content: imgB64 };
+    if (sha) body.sha = sha;
+
+    const ghRes = await fetch(`https://api.github.com/repos/${ghRepo}/contents/${imgPath}`, {
+      method: 'PUT',
+      headers: { Authorization: 'token ' + ghToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+
+    if (!ghRes.ok) {
+      const err = await ghRes.json();
+      throw new Error(err.message || 'GitHub upload failed');
+    }
+
+    // 2️⃣ رابط الصورة من GitHub
+    const img_url = `https://raw.githubusercontent.com/${ghRepo}/main/${imgPath}`;
+
+    showStatus('add-status', '⏳ Saving to database...');
+
+    // 3️⃣ حفظ البيانات في D1
     const res = await apiFetch('/api/mods', 'POST', {
-      name, desc, tag, section,
-      img_url: coverData,
-      link,
+      name, desc, tag, section, img_url, link,
       price: section === 'pass-paid' ? (price || '20') : null,
     });
 
@@ -502,9 +521,10 @@ async function addMod() {
   } catch(e) {
     hideLoading();
     showStatus('add-status', '❌ ' + e.message, true);
+    toast('❌ ' + e.message, true);
   }
   $('add-btn').disabled = false;
-}
+  }
 
 function resetForm() {
   ['f-name','f-desc','f-price','f-link'].forEach(id => $(id).value = '');
