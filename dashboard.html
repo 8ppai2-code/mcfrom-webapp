@@ -511,6 +511,18 @@ async function addMod() {
     }
 
     const img_url = 'https://raw.githubusercontent.com/' + ghRepo + '/main/' + imgPath;
+    try {
+  const testRes = await fetch(settings.api + '/api/mods', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-API-Secret': settings.secret },
+    body: JSON.stringify({ name, desc, tag, section, img_url, link, price: null })
+  });
+  const testData = await testRes.json();
+  alert('API Response: ' + JSON.stringify(testData));
+} catch(e) {
+  alert('Fetch Error: ' + e.message);
+  return;
+      }
 
     showStatus('add-status', '⏳ Saving to database...');
 
