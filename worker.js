@@ -623,7 +623,36 @@ async function handleAPI(request, env, path) {
     const balance = await getBalance(env, userId);
     return json({ success: true, earned: AD_REWARD, balance });
   }
+// POST /api/upload-image
+if (path === "/api/upload-image" && method === "POST") {
+  if (!isAuth) return json({ error: "Unauthorized" }, 401);
+  const { imgB64, imgPath, ghToken, ghRepo } = await request.json();
+  
+  let sha = '';
+  try {
+    const r = await fetch(`https://api.github.com/repos/${ghRepo}/contents/${imgPath}`, {
+      headers: { Authorization: 'token ' + ghToken }
+    });
+    if (r.ok) { const d = await r.json(); sha = d.sha; }
+  } catch(e) {}
 
+  const body = { message: 'Add mod image', content: imgB64 };
+  if (sha) body.sha = sha;
+
+  const res = await fetch(`https://api.github.com/repos/${ghRepo}/contents/${imgPath}`, {
+    method: 'PUT',
+    headers: { Authorization: 'token ' + ghToken, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    return json({ error: err.message }, 400);
+  }
+  
+  const img_url = `https://raw.githubusercontent.com/${ghRepo}/main/${imgPath}`;
+  return json({ success: true, img_url });
+}
   // POST /api/upload-image
   if (path === "/api/upload-image" && method === "POST") {
     if (!isAuth) return json({ error: "Unauthorized" }, 401);
