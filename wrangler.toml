@@ -1,6 +1,6 @@
 name = "bot"
 main = "worker.js"
-compatibility_date = "2026-03-27"
+compatibility_date = "2026-05-9"
 
 [[kv_namespaces]]
 binding = "BOT_KV"
