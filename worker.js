@@ -624,6 +624,32 @@ async function handleAPI(request, env, path) {
     return json({ success: true, earned: AD_REWARD, balance });
   }
 
+  // POST /api/upload-image
+  if (path === "/api/upload-image" && method === "POST") {
+    if (!isAuth) return json({ error: "Unauthorized" }, 401);
+    try {
+      const { imgB64, imgPath, ghToken, ghRepo } = await request.json();
+      if (!imgB64 || !imgPath || !ghToken || !ghRepo) return json({ error: "Missing fields" }, 400);
+      let sha = "";
+      try {
+        const r = await fetch("https://api.github.com/repos/" + ghRepo + "/contents/" + imgPath, {
+          headers: { Authorization: "token " + ghToken, "User-Agent": "MCFrom-Bot" }
+        });
+        if (r.ok) { const d = await r.json(); sha = d.sha || ""; }
+      } catch(e) {}
+      const body = { message: "Add mod image " + Date.now(), content: imgB64 };
+      if (sha) body.sha = sha;
+      const res = await fetch("https://api.github.com/repos/" + ghRepo + "/contents/" + imgPath, {
+        method: "PUT",
+        headers: { Authorization: "token " + ghToken, "Content-Type": "application/json", "User-Agent": "MCFrom-Bot" },
+        body: JSON.stringify(body)
+      });
+      if (!res.ok) { const err = await res.json(); return json({ error: err.message || "GitHub upload failed" }, 400); }
+      const img_url = "https://raw.githubusercontent.com/" + ghRepo + "/main/" + imgPath;
+      return json({ success: true, img_url });
+    } catch(e) { return json({ error: e.message }, 500); }
+  }
+  
   // POST /api/mods
   if (path === "/api/mods" && method === "POST") {
     if (!isAuth) return json({ error: "Unauthorized" }, 401);
