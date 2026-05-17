@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>MC From</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0d0f;--s1:#13131a;--s2:#1a1a24;--s3:#22222e;--blue:#4f8ef7;--blue2:#6ba3ff;--purple:#8b5cf6;--purple2:#a78bfa;--gold:#f59e0b;--gold2:#fbbf24;--green:#10b981;--red:#ef4444;--cyan:#06b6d4;--text:#f1f1f5;--text2:#a0a0b8;--border:#2a2a3a;--nav:68px;--r:14px}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;display:flex;flex-direction:column}
+#loading{position:fixed;inset:0;z-index:9999;background:linear-gradient(180deg,#0a1628,#0d0d1f 50%,#0a0a12);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .8s}
+#loading.hide{opacity:0;pointer-events:none}
+.load-glow{position:absolute;top:20%;left:50%;transform:translateX(-50%);width:280px;height:280px;background:radial-gradient(circle,rgba(79,142,247,.2) 0%,transparent 70%);border-radius:50%;animation:breathe 3s ease-in-out infinite}
+.load-icon{width:100px;height:100px;image-rendering:pixelated;filter:drop-shadow(0 0 24px rgba(79,142,247,.7));animation:float 3s ease-in-out infinite;position:relative;z-index:1}
+.load-brand{font-family:'Press Start 2P',monospace;font-size:18px;background:linear-gradient(135deg,var(--blue),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:22px;letter-spacing:3px;z-index:1;position:relative}
+.load-sub{font-family:'VT323',monospace;font-size:20px;color:var(--text2);margin-top:6px;animation:blink 1.2s step-end infinite;z-index:1;position:relative}
+.load-bar-wrap{width:180px;height:3px;background:var(--s3);border-radius:2px;margin-top:28px;overflow:hidden;z-index:1;position:relative}
+.load-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--blue),var(--purple));border-radius:2px;animation:loadbar 2s ease forwards}
+@keyframes breathe{0%,100%{transform:translateX(-50%) scale(1)}50%{transform:translateX(-50%) scale(1.15)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes loadbar{0%{width:0%}100%{width:100%}}
+#pages{flex:1;overflow:hidden;position:relative}
+.page{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;padding-bottom:calc(var(--nav)+12px);display:none;scrollbar-width:none}
+.page::-webkit-scrollbar{display:none}
+.page.active{display:block;animation:pageIn .25s ease}
+@keyframes pageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ph{display:flex;align-items:center;gap:10px;padding:18px 16px 12px;position:sticky;top:0;z-index:40;background:linear-gradient(to bottom,var(--bg) 70%,transparent)}
+.ph h1{font-family:'Press Start 2P',monospace;font-size:11px;background:linear-gradient(135deg,var(--blue),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:1px}
+.ph-icon{width:24px;height:24px;image-rendering:pixelated}
+.ph-right{margin-left:auto}
+.balance-chip{display:flex;align-items:center;gap:5px;background:linear-gradient(135deg,rgba(245,158,11,.15),rgba(251,191,36,.08));border:1px solid rgba(245,158,11,.3);border-radius:20px;padding:4px 10px;font-size:13px;font-weight:700;color:var(--gold2)}
+.search-wrap{padding:0 14px 14px}
+.search-box{display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:12px;padding:10px 14px;transition:border-color .2s}
+.search-box:focus-within{border-color:var(--blue)}
+.search-box span{color:var(--text2)}
+.search-box input{flex:1;background:none;border:none;outline:none;color:var(--text);font-family:'Inter',sans-serif;font-size:14px}
+.search-box input::placeholder{color:var(--text2)}
+.slider-wrap{padding:0 14px 14px}
+.slider-track{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.slider-track::-webkit-scrollbar{display:none}
+.slider-card{flex-shrink:0;width:82vw;max-width:310px;border-radius:var(--r);overflow:hidden;position:relative;cursor:pointer;scroll-snap-align:start;border:1px solid var(--border);transition:transform .2s}
+.slider-card:active{transform:scale(.97)}
+.slider-img{width:100%;height:155px;object-fit:cover;display:block;background:var(--s2)}
+.slider-overlay{position:absolute;bottom:0;left:0;right:0;padding:22px 12px 10px;background:linear-gradient(transparent,rgba(0,0,0,.92))}
+.slider-name{font-family:'Press Start 2P',monospace;font-size:8px;color:#fff;line-height:1.7}
+.slider-badge{position:absolute;top:10px;left:10px;background:linear-gradient(135deg,var(--blue),var(--purple));color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px}
+.slider-dl{position:absolute;bottom:10px;right:10px;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:10px;font-weight:700;padding:5px 10px;border-radius:8px}
+.section-title{font-family:'Press Start 2P',monospace;font-size:8px;color:var(--text2);padding:4px 14px 10px;letter-spacing:1px}
+.week-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 14px 14px}
+.week-card{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;cursor:pointer;transition:all .2s}
+.week-card:active{transform:scale(.97);border-color:var(--blue)}
+.week-img{width:100%;height:95px;object-fit:cover;display:block;background:var(--s3)}
+.week-body{padding:8px 10px}
+.week-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.week-tag{font-size:11px;color:var(--text2);margin-top:2px}
+.ftabs{display:flex;gap:8px;padding:0 14px 12px;overflow-x:auto;scrollbar-width:none}
+.ftabs::-webkit-scrollbar{display:none}
+.ftab{flex-shrink:0;background:var(--s2);border:1px solid var(--border);color:var(--text2);font-size:13px;font-weight:600;padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.ftab.on{background:linear-gradient(135deg,var(--blue),var(--purple));border-color:transparent;color:#fff}
+.mlist{padding:0 14px;display:flex;flex-direction:column;gap:10px}
+.mc{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);cursor:pointer;display:flex;gap:12px;padding:12px;transition:all .2s;align-items:center}
+.mc:active{border-color:var(--blue);background:var(--s3)}
+.mc-thumb{width:60px;height:60px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--s3)}
+.mc-info{flex:1;min-width:0}
+.mc-name{font-size:15px;font-weight:700;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mc-desc{font-size:12px;color:var(--text2);line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.mc-meta{display:flex;gap:6px;align-items:center;margin-top:6px;flex-wrap:wrap}
+.tag-chip{font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px}
+.tag-vip{background:rgba(245,158,11,.15);color:var(--gold2);border:1px solid rgba(245,158,11,.3)}
+.tag-new{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+.tag-pass{background:rgba(139,92,246,.15);color:var(--purple2);border:1px solid rgba(139,92,246,.3)}
+.tag-free{background:rgba(6,182,212,.15);color:var(--cyan);border:1px solid rgba(6,182,212,.3)}
+.pagination{display:flex;justify-content:center;gap:8px;padding:14px}
+.page-btn{width:32px;height:32px;border-radius:8px;background:var(--s2);border:1px solid var(--border);color:var(--text2);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.page-btn.on{background:linear-gradient(135deg,var(--blue),var(--purple));border-color:transparent;color:#fff}
+.empty-state{text-align:center;padding:50px 20px;color:var(--text2)}
+.empty-state p{font-family:'VT323',monospace;font-size:20px;margin-top:10px}
+#nav{height:var(--nav);background:rgba(13,13,15,.96);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;padding:0 8px 4px;flex-shrink:0}
+.nb{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1;cursor:pointer;padding:6px 2px;border-radius:10px;transition:all .2s}
+.nb.on .nlabel{background:linear-gradient(135deg,var(--blue),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nb.on .niw{filter:drop-shadow(0 0 8px rgba(79,142,247,.5))}
+.niw{width:26px;height:26px;display:flex;align-items:center;justify-content:center}
+.niw img{width:22px;height:22px;image-rendering:pixelated}
+.nlabel{font-size:10px;font-weight:700;color:var(--text2);transition:all .2s}
+.nb.main{flex:0 0 62px}
+.nb.main .niw{width:52px;height:52px;background:linear-gradient(135deg,var(--blue),var(--purple));border-radius:16px;margin-top:-16px;border:3px solid var(--bg);box-shadow:0 4px 20px rgba(79,142,247,.4)}
+.nb.main .niw img{width:28px;height:28px;filter:brightness(0) invert(1)}
+.nb.main .nlabel{background:linear-gradient(135deg,var(--blue),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+#toast-wrap{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:9000;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}
+.toast{background:rgba(19,19,26,.96);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:20px;padding:8px 16px;font-size:13px;font-weight:600;color:var(--text);animation:toastIn .3s ease;white-space:nowrap}
+@keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.skel{background:linear-gradient(90deg,var(--s2) 25%,var(--s3) 50%,var(--s2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-mc{background:var(--s2);border:1px solid var(--border);border-radius:var(--r);padding:12px;display:flex;gap:12px;align-items:center}
+.skel-thumb{width:60px;height:60px;border-radius:10px;flex-shrink:0}
+.skel-line{height:14px;border-radius:6px;margin-bottom:6px}
+#page-detail{padding-bottom:0}
+.det-img-wrap{position:relative}
+.det-img{width:100%;height:215px;object-fit:cover;display:block;background:var(--s2)}
+.det-back{position:absolute;top:12px;left:12px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;color:#fff;font-size:18px}
+.det-actions{display:flex;gap:8px;padding:12px 14px}
+.abtn{flex:1;background:var(--s2);border:1px solid var(--border);border-radius:10px;padding:11px;display:flex;align-items:center;justify-content:center;gap:6px;cursor:pointer;font-size:13px;font-weight:700;color:var(--text);transition:all .2s;font-family:'Inter',sans-serif}
+.abtn.dl-btn{background:linear-gradient(135deg,var(--blue),var(--purple));border-color:transparent;color:#fff;flex:2}
+.abtn.liked{border-color:var(--red);color:var(--red)}
+.det-info{padding:0 14px 20px}
+.det-name{font-family:'Press Start 2P',monospace;font-size:10px;line-height:1.8;margin-bottom:10px;background:linear-gradient(135deg,var(--blue),var(--purple2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.det-desc{font-size:14px;color:var(--text2);line-height:1.7}
+.pay-section{padding:0 14px 24px}
+.pay-title{font-size:12px;font-weight:700;color:var(--gold2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.pay-btns{display:flex;flex-direction:column;gap:8px}
+.pay-btn{width:100%;border:none;border-radius:12px;padding:13px 16px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Inter',sans-serif;transition:opacity .2s}
+.pay-btn:active{opacity:.8}
+.pay-stars{background:linear-gradient(135deg,#1a1200,#2a1d00);border:1px solid rgba(245,158,11,.4);color:var(--gold2)}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="load-glow"></div>
+  <div class="load-brand">MC FROM</div>
+  <div class="load-sub">Loading...</div>
+  <div class="load-bar-wrap"><div class="load-bar"></div></div>
+</div>
+
+<div id="pages">
+
+<!-- ADD-ONS -->
+<div class="page active" id="page-addons">
+  <div class="ph">
+    <h1>Add-ons</h1>
+    <div class="ph-right">
+      <div class="balance-chip">💎 <span id="balance-display">0.0</span></div>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <div class="search-box">
+      <span>🔍</span>
+      <input type="text" id="search-input" placeholder="Search add-ons..." oninput="searchMods()">
+    </div>
+  </div>
+  <div id="slider-section" style="display:none">
+    <div class="slider-wrap"><div class="slider-track" id="slider-track"></div></div>
+  </div>
+  <div id="week-section" style="display:none">
+    <div class="section-title">⭐ MOD OF THE WEEK</div>
+    <div class="week-grid" id="week-grid"></div>
+  </div>
+  <div class="ftabs">
+    <button class="ftab on" onclick="filterMods('all',this)">All</button>
+    <button class="ftab" onclick="filterMods('VIP',this)">⚡ VIP</button>
+    <button class="ftab" onclick="filterMods('New',this)">✨ New</button>
+    <button class="ftab" onclick="filterMods('Pass',this)">💎 Pass</button>
+  </div>
+  <div class="mlist" id="mods-list">
+    <div class="skel-mc"><div class="skel skel-thumb"></div><div style="flex:1"><div class="skel skel-line" style="width:65%"></div><div class="skel skel-line" style="width:45%"></div></div></div>
+    <div class="skel-mc"><div class="skel skel-thumb"></div><div style="flex:1"><div class="skel skel-line" style="width:55%"></div><div class="skel skel-line" style="width:35%"></div></div></div>
+    <div class="skel-mc"><div class="skel skel-thumb"></div><div style="flex:1"><div class="skel skel-line" style="width:70%"></div><div class="skel skel-line" style="width:50%"></div></div></div>
+  </div>
+  <div class="pagination" id="pagination"></div>
+</div>
+
+<!-- PASS -->
+<div class="page" id="page-pass">
+  <div class="ph"><h1>Pass</h1></div>
+  <div class="ftabs" style="padding-top:14px">
+    <button class="ftab on" onclick="filterPass('all',this)">All</button>
+    <button class="ftab" onclick="filterPass('free',this)">🆓 Free</button>
+    <button class="ftab" onclick="filterPass('paid',this)">⭐ Paid</button>
+  </div>
+  <div class="mlist" id="pass-list">
+    <div class="skel-mc"><div class="skel skel-thumb"></div><div style="flex:1"><div class="skel skel-line" style="width:60%"></div><div class="skel skel-line" style="width:40%"></div></div></div>
+  </div>
+</div>
+
+<!-- DETAIL -->
+<div class="page" id="page-detail">
+  <div class="det-img-wrap">
+    <img class="det-img" id="det-img" src="" alt="" onerror="this.style.background='var(--s3)'">
+    <button class="det-back" onclick="goBack()">←</button>
+  </div>
+  <div class="det-actions">
+    <button class="abtn" id="like-btn" onclick="toggleLike()">❤️ <span id="like-count">0</span></button>
+    <button class="abtn" onclick="shareMod()">🔗 Share</button>
+    <button class="abtn dl-btn" onclick="downloadMod()">⬇️ Download</button>
+  </div>
+  <div class="det-info">
+    <div class="det-name" id="det-name"></div>
+    <div class="det-desc" id="det-desc"></div>
+  </div>
+  <div class="pay-section" id="pay-section" style="display:none">
+    <div class="pay-title">💎 Unlock This Mod</div>
+    <div class="pay-btns" id="pay-btns"></div>
+  </div>
+</div>
+
+</div><!-- /pages -->
+
+<nav id="nav">
+  <div class="nb on" data-p="addons" onclick="showPage('addons',this)">
+    <div class="niw">🎮</div>
+    <span class="nlabel">Add-ons</span>
+  </div>
+  <div class="nb" data-p="pass" onclick="showPage('pass',this)">
+    <div class="niw">💎</div>
+    <span class="nlabel">Pass</span>
+  </div>
+  <div class="nb main" data-p="addons" onclick="showPage('addons',this)">
+    <div class="niw">🎮</div>
+    <span class="nlabel">Home</span>
+  </div>
+  <div class="nb" data-p="tools" onclick="showPage('tools',this)">
+    <div class="niw">🔧</div>
+    <span class="nlabel">Tools</span>
+  </div>
+  <div class="nb" data-p="earn" onclick="showPage('earn',this)">
+    <div class="niw">💰</div>
+    <span class="nlabel">Earn</span>
+  </div>
+</nav>
+
+<div id="toast-wrap"></div>
+
+<script>
+// ==========================================
+//  MC FROM — Web App v3.0 (PERMANENT CDN)
+//  API: https://mcfrom-bot.8ppai2.workers.dev
+// ==========================================
+const API = "https://mcfrom-bot.8ppai2.workers.dev";
+
+let MODS = [], PASS_MODS = [], FEATURED_ID = null;
+let currentMod = null, prevPage = 'addons';
+let currentFilter = 'all', currentPage = 1;
+const PER_PAGE = 10;
+
+// ── INIT ──────────────────────────────────────────
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    const el = document.getElementById('loading');
+    if (el) { el.classList.add('hide'); setTimeout(() => el.remove(), 800); }
+  }, 1500);
+  loadData();
+});
+
+// ── DATA ──────────────────────────────────────────
+async function loadData() {
+  try {
+    const r = await fetch(API + '/api/mods?t=' + Date.now());
+    const d = await r.json();
+    MODS = d.addons || [];
+    PASS_MODS = d.pass || [];
+    FEATURED_ID = d.featured || null;
+    renderSlider();
+    renderWeek();
+    renderMods();
+    renderPass();
+  } catch (e) {
+    console.error('Load error:', e);
+    renderMods();
+    renderPass();
+  }
+}
+
+// ── NAVIGATION ────────────────────────────────────
+function showPage(id, navEl) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const page = document.getElementById('page-' + id);
+  if (page) page.classList.add('active');
+
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+  if (navEl) {
+    navEl.classList.add('on');
+  } else {
+    document.querySelectorAll('.nb').forEach(b => {
+      if (b.dataset.p === id) b.classList.add('on');
+    });
+  }
+  if (id === 'addons') {
+    document.querySelectorAll('.nb.main').forEach(b => b.classList.add('on'));
+  }
+}
+
+function goBack() { showPage(prevPage); }
+
+// ── SLIDER ────────────────────────────────────────
+function renderSlider() {
+  const feat = MODS.filter(m => m.id === FEATURED_ID);
+  const all = feat.length ? feat : MODS.slice(0, 3);
+  if (!all.length) return;
+  document.getElementById('slider-section').style.display = 'block';
+  document.getElementById('slider-track').innerHTML = all.map(m => `
+    <div class="slider-card" onclick="openMod('${m.id}','addons')">
+      <img class="slider-img" src="${m.img_url || ''}" alt="${m.name}" onerror="this.style.background='var(--s3)'">
+      <div class="slider-badge">⭐ FEATURED</div>
+      <div class="slider-overlay"><div class="slider-name">${m.name}</div></div>
+      <div class="slider-dl">⬇️ Download</div>
+    </div>`).join('');
+}
+
+// ── WEEK GRID ────────────────────────────────────
+function renderWeek() {
+  const week = MODS.slice(0, 4);
+  if (!week.length) return;
+  document.getElementById('week-section').style.display = 'block';
+  document.getElementById('week-grid').innerHTML = week.map(m => `
+    <div class="week-card" onclick="openMod('${m.id}','addons')">
+      <img class="week-img" src="${m.img_url || ''}" alt="${m.name}" onerror="this.style.background='var(--s3)'">
+      <div class="week-body">
+        <div class="week-name">${m.name}</div>
+        <div class="week-tag">${m.tag || 'Addon'}</div>
+      </div>
+    </div>`).join('');
+}
+
+// ── MOD CARD ─────────────────────────────────────
+function modCard(m, sec) {
+  const tc = m.tag === 'VIP' ? 'tag-vip' : m.tag === 'New' ? 'tag-new' : m.tag === 'Pass' ? 'tag-pass' : 'tag-free';
+  return `<div class="mc" onclick="openMod('${m.id}','${sec}')">
+    <img class="mc-thumb" src="${m.img_url || ''}" alt="${m.name}" onerror="this.style.background='var(--s3)'">
+    <div class="mc-info">
+      <div class="mc-name">${m.name}</div>
+      <div class="mc-desc">${m.desc || 'No description'}</div>
+      <div class="mc-meta">
+        <span class="tag-chip ${tc}">${m.tag || 'Addon'}</span>
+        ${m.price ? `<span class="tag-chip tag-vip">⭐ ${m.price}</span>` : ''}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── RENDER MODS ───────────────────────────────────
+function renderMods(filter, page) {
+  if (filter === undefined) filter = 'all';
+  if (page === undefined) page = 1;
+  const list = document.getElementById('mods-list');
+  if (!list) return;
+
+  let filtered = filter === 'all' ? MODS : MODS.filter(m => m.tag === filter);
+  const q = document.getElementById('search-input')?.value.trim().toLowerCase() || '';
+  if (q) filtered = filtered.filter(m => m.name.toLowerCase().includes(q) || (m.desc || '').toLowerCase().includes(q));
+
+  const total = filtered.length;
+  const pages = Math.ceil(total / PER_PAGE);
+  const slice = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+
+  if (!slice.length) {
+    list.innerHTML = '<div class="empty-state"><p>No add-ons yet!</p></div>';
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  list.innerHTML = slice.map(m => modCard(m, 'addons')).join('');
+  renderPagination(pages, page, filter);
+}
+
+function renderPagination(total, current, filter) {
+  const el = document.getElementById('pagination');
+  if (!el) return;
+  if (total <= 1) { el.innerHTML = ''; return; }
+  let html = '';
+  for (let i = 1; i <= Math.min(total, 7); i++) {
+    html += `<button class="page-btn ${i === current ? 'on' : ''}" onclick="changePage(${i},'${filter}')">${i}</button>`;
+  }
+  el.innerHTML = html;
+}
+
+function changePage(page, filter) {
+  currentPage = page;
+  renderMods(filter, page);
+  document.getElementById('page-addons').scrollTop = 0;
+}
+
+function filterMods(tag, el) {
+  document.querySelectorAll('#page-addons .ftab').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  currentFilter = tag;
+  currentPage = 1;
+  renderMods(tag, 1);
+}
+
+function searchMods() { renderMods(currentFilter, 1); }
+
+// ── RENDER PASS ───────────────────────────────────
+function renderPass(filter) {
+  if (filter === undefined) filter = 'all';
+  const list = document.getElementById('pass-list');
+  if (!list) return;
+  let filtered = filter === 'all' ? PASS_MODS : filter === 'free' ? PASS_MODS.filter(m => !m.price) : PASS_MODS.filter(m => m.price);
+  if (!filtered.length) {
+    list.innerHTML = '<div class="empty-state"><p>Nothing here yet.</p></div>';
+    return;
+  }
+  list.innerHTML = filtered.map(m => modCard(m, 'pass')).join('');
+}
+
+function filterPass(tag, el) {
+  document.querySelectorAll('#page-pass .ftab').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+  renderPass(tag);
+}
+
+// ── MOD DETAIL ────────────────────────────────────
+function openMod(id, sec) {
+  const list = sec === 'addons' ? MODS : PASS_MODS;
+  const mod = list.find(m => m.id === id);
+  if (!mod) return;
+  currentMod = mod;
+  prevPage = document.querySelector('.page.active')?.id.replace('page-', '') || 'addons';
+
+  document.getElementById('det-img').src = mod.img_url || '';
+  document.getElementById('det-name').textContent = mod.name;
+  document.getElementById('det-desc').textContent = mod.desc || 'No description.';
+  document.getElementById('like-count').textContent = mod.likes || 0;
+
+  const ps = document.getElementById('pay-section');
+  if (ps) {
+    if (sec === 'pass' && mod.price) {
+      ps.style.display = 'block';
+      document.getElementById('pay-btns').innerHTML = `
+        <button class="pay-btn pay-stars" onclick="payStars(${mod.price})">⭐ ${mod.price} Stars</button>`;
+    } else {
+      ps.style.display = 'none';
+    }
+  }
+  showPage('detail');
+}
+
+function toggleLike() {
+  if (!currentMod) return;
+  currentMod.likes = (currentMod.likes || 0) + 1;
+  document.getElementById('like-count').textContent = currentMod.likes;
+  fetch(API + '/api/like/' + currentMod.id, { method: 'POST' }).catch(() => {});
+}
+
+function shareMod() {
+  if (!currentMod) return;
+  if (navigator.share) navigator.share({ title: currentMod.name, url: window.location.href });
+  else { navigator.clipboard?.writeText(window.location.href); showToast('Link copied!'); }
+}
+
+function downloadMod() {
+  if (!currentMod) return;
+  if (currentMod.link) window.open(currentMod.link, '_blank');
+  else showToast('No download link');
+}
+
+function payStars(amount) {
+  showToast('Pay ' + amount + ' Stars — Coming Soon!');
+}
+
+// ── TOAST ─────────────────────────────────────────
+function showToast(msg) {
+  const wrap = document.getElementById('toast-wrap');
+  if (!wrap) return;
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  wrap.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+</script>
+</body>
+</html>
