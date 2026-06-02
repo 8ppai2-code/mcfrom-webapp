@@ -775,22 +775,39 @@ window.addEventListener('load', () => {
 });
 
 async function loadData() {
+async function loadData() {
   try {
     const r = await fetch(API_MODS + '/api/mods?t=' + Date.now());
     const d = await r.json();
     MODS = d.addons || [];
     PASS_MODS = d.pass || [];
+
+    // ✅ جلب الأسعار من خادم الرصيد
+    if (PASS_MODS.length) {
+      const ids = PASS_MODS.map(m => m.id).join(',');
+      const priceRes = await fetch(`https://telegram-api.8ppai2.workers.dev/api/mod-prices?modIds=${ids}`);
+      const prices = await priceRes.json(); // تأكد أن الـ endpoint يدعم ?modIds=
+      // دمج الأسعار
+      for (let mod of PASS_MODS) {
+        const p = prices[mod.id];
+        if (p) {
+          mod.price_coins = p.price_coins;
+          mod.price_stars = p.price_stars;
+          mod.promo_code = p.promo_code;
+        } else {
+          mod.price_coins = null;
+          mod.price_stars = null;
+          mod.promo_code = null;
+        }
+      }
+    }
+
     FEATURED_ID = d.featured || null;
     renderMods();
     renderPass();
     renderWeek();
-  } catch (e) {
-    console.error('API error:', e);
-    showToast('⚠️ Failed to load mods from API');
-    document.getElementById('mods-list').innerHTML = '<div class="empty-state"><p>⚠️ Check your internet connection</p></div>';
+  } catch (e) { /* ... */ }
   }
-}
-
 /* ===== BALANCE & TRANSACTIONS ===== */
 function loadBalance() {
   Wallet.getBalance(balance => {
